@@ -15,4 +15,14 @@ df = pd.read_csv('dataset/ecommerce.csv')
 
 df.head()
 
+# İlk olarak veri setinin genel bir özetine bakalım.
+df.info()
 
+# Veri setindeki eksik değerleri kontrol edelim.
+df.isnull().sum()
+
+# Veri setindeki benzersiz değerlerin sayısını kontrol edelim.
+df.nunique()
+
+# Sayısal değişkenlerin temel istatistiklerini inceleyelim.
+df.describe()
