@@ -32,7 +32,7 @@ def outlier_thresholds(dataframe, column, q1=0.05, q3=0.95):
     return low_th, up_th
 
 
-def grab_col_names(dataframe, cat_th=10, car_th=20):
+def grab_col_names(dataframe, cat_th=10, car_th=30):
     """
 
     Veri setindeki kategorik, numerik ve kategorik fakat kardinal değişkenlerin isimlerini verir.
