@@ -115,3 +115,57 @@ df.tail(20)
 df.isnull().sum()
 
 df.drop('product category', axis=1, inplace=True)
+
+df.info()
+
+list = ['order_purchase_timestamp', 'order_approved_at', 'order_delivered_carrier_date',
+        'order_delivered_customer_date',
+        'order_estimated_delivery_date', 'review_creation_date', 'review_answer_timestamp',
+        'shipping_limit_date']
+
+df['review_creation_date'] = df['review_creation_date'].astype('datetime64[ns]')
+df['review_answer_timestamp'] = df['review_answer_timestamp'].astype('datetime64[ns]')
+
+for col in list:
+    df[col] = pd.to_datetime(df[col], format='%Y-%m-%d %H:%M:%S')
+
+corr = df[num_cols].corr()
+cor_matrix = corr.abs()
+upper_triangle_matrix = cor_matrix.where(np.triu(np.ones(cor_matrix.shape), k=1).astype(bool))
+drop_list = [col for col in upper_triangle_matrix if any(upper_triangle_matrix[col] > 0.9)]
+# df.drop(drop_list, inplace=True, axis=1)
+sns.set(rc={'figure.figsize': (8, 8)})
+sns.heatmap(corr, cmap='RdBu', annot=True)
+plt.show()
+
+df['approval_time(dk)'] = (df['order_approved_at'] - df['order_purchase_timestamp']).dt.total_seconds() / 60
+
+df['customer_wait_time(day)'] = (df['order_delivered_customer_date'] - df[
+    'order_purchase_timestamp']).dt.total_seconds() / 86400
+
+
+df['purchase_weekday'] = df['order_purchase_timestamp'].dt.weekday
+
+
+df['purchase_weekday'].unique()
+
+
+df['purchase_weekday'] = df['purchase_weekday'].replace({5: 0, 6: 0, 0: 1, 1: 1, 2: 1, 3: 1, 4: 1})
+
+special_days = {
+    'New Year': ['01-01'],
+    'Carnival': ['02-24', '02-25', '02-26'],
+    'Valentine\'s Day': ['06-12'],
+    'Children\'s Day': ['10-12'],
+    'Black Friday': ['11-27'],
+    'Christmas': ['12-25']
+}
+
+
+df['special_day'] = 0
+
+for event, dates in special_days.items():
+    for date in dates:
+        df.loc[df['order_purchase_timestamp'].dt.strftime('%m-%d') == date, 'special_day'] = 1
+
+df.head(40)
