@@ -4,6 +4,7 @@ from lib import encoding as en, outliers as out, summary as sum, graphic as gra
 from lib import outliers as out, summary as sum, encoding as en
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.cluster import KMeans
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler, RobustScaler
@@ -11,21 +12,36 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler, RobustScaler
 pd.set_option('display.max_column', None)
 pd.set_option('display.width', 5000)
 
-df = pd.read_csv('dataset/ecommerce.csv')
-dff = pd.read_csv('dataset/sellers.csv')
+customers_df = pd.read_csv('datasets/olist_customers_dataset.csv')
+geolocation_df = pd.read_csv('datasets/olist_geolocation_dataset.csv')
+items_df = pd.read_csv('datasets/olist_order_items_dataset.csv')
+payments_df = pd.read_csv('datasets/olist_order_payments_dataset.csv')
+reviews_df = pd.read_csv('datasets/olist_order_reviews_dataset.csv')
+orders_df = pd.read_csv('datasets/olist_orders_dataset.csv')
+products_df = pd.read_csv('datasets/olist_products_dataset.csv')
+sellers_df = pd.read_csv('datasets/olist_sellers_dataset.csv')
+category_translation_df = pd.read_csv('datasets/product_category_name_translation.csv')
 
-df = pd.merge(df, dff, on='seller_id')
+df = pd.merge(customers_df, orders_df, on="customer_id", how='inner')
+df = df.merge(reviews_df, on="order_id", how='inner')
+df = df.merge(items_df, on="order_id", how='inner')
+df = df.merge(products_df, on="product_id", how='inner')
+df = df.merge(payments_df, on="order_id", how='inner')
+df = df.merge(sellers_df, on='seller_id', how='inner')
+df = df.merge(category_translation_df, on='product_category_name', how='inner')
+
+df.rename(columns={'product_category_name_english': 'product category', 'product_name_lenght': 'product_name_length',
+                   'product_description_lenght': 'product_description_length'}, inplace=True)
 
 df.drop(['customer_unique_id', 'customer_zip_code_prefix', 'payment_sequential', 'review_comment_title',
          'product_name_length',
-         'product_description_length', 'seller_zip_code_prefix', 'product_photos_qty'
+         'product_description_length', 'seller_zip_code_prefix', 'product_photos_qty', 'product_category_name'
+            , 'review_comment_message'
          ], inplace=True, axis=1)
 
 df.dropna(subset=['product category', 'product_weight_g', 'product_length_cm'
     , 'product_height_cm', 'product_width_cm', 'order_approved_at', 'order_delivered_carrier_date',
                   'order_delivered_customer_date'], inplace=True)
-
-df = df.drop_duplicates(subset=['order_id'])
 
 gra.plot_numerical_col(df, num_cols=['price', 'payment_value', 'freight_value'], plot_type='kde')
 
@@ -40,83 +56,73 @@ cat_cols, num_cols = result[0], result[1]
 df['product category'].unique()
 
 categories_dict = {
-    'Furniture': ['Furniture office', 'Furniture Decoration', 'Room Furniture',
-                  'Furniture Kitchen Service Area Dinner and Garden', 'Furniture',
-                  'CITTE AND UPHACK FURNITURE', 'bed table bath', ],
+    'Furniture': ['office_furniture', 'furniture_decor', 'furniture_living_room',
+                  'kitchen_dining_laundry_garden_furniture', 'furniture_bedroom',
+                  'furniture_mattress_and_upholstery', 'bed_bath_table', ],
 
-    'Automotive': ['automotive'],
+    'Automotive': ['auto'],
 
-    'Sport & Leisure': ['sport leisure', 'Toys', 'Games consoles',
-                        'Fashion Sport'],
+    'Sport & Leisure': ['sports_leisure', 'toys', 'consoles_games',
+                        'fashion_sport'],
 
-    'Home & Garden': ['House comfort', 'House Comfort 2', 'Cool Stuff',
-                      'Garden tools', 'Christmas articles', 'party articles',
-                      'Construction Tools Garden', 'HOUSE PASTALS OVEN AND CAFE',
-                      'La Cuisine', 'housewares', 'climatization', 'Market Place'],
+    'Home & Garden': ['home_confort', 'home_comfort_2', 'cool_stuff',
+                      'garden_tools', 'christmas_supplies', 'party_supplies', 'home_construction',
+                      'costruction_tools_garden', 'small_appliances_home_oven_and_coffee', 'small_appliances',
+                      'la_cuisine', 'housewares', 'air_conditioning', 'market_place'],
 
-    'Baby & Kids': ['babies', 'toys', 'Fashion Children\'s Clothing'],
+    'Baby & Kids': ['baby', 'toys', 'fashion_childrens_clothes'],
 
-    'Electronics': ['computer accessories', 'musical instruments', 'Electronics',
-                    'ELECTRICES 2', 'PCs', 'IMAGE IMPORT TABLETS',
-                    'home appliances', 'Kitchen portable and food coach',
-                    'PCs', 'telephony', 'electronics', 'fixed telephony', 'PC Gamer'],
+    'Electronics': ['computers_accessories', 'musical_instruments', 'Electronics',
+                    'home_appliances_2', 'computers', 'tablets_printing_image',
+                    'home_appliances', 'Kitchen portable and food coach',
+                    'PCs', 'telephony', 'electronics', 'fixed_telephony', 'PC Gamer'],
 
-    'Fashion & Accessories': ['Fashion Bags and Accessories',
-                              'Fashion Women\'s Clothing',
-                              'Fashion Men\'s Clothing',
-                              'Fashion Underwear and Beach Fashion', 'Watches present', 'Bags Accessories',
-                              'Fashion Calcados'],
+    'Fashion & Accessories': ['fashion_bags_accessories',
+                              'fashio_female_clothing',
+                              'fashion_male_clothing',
+                              'fashion_underwear_beach', 'watches_gifts', 'luggage_accessories',
+                              'fashion_shoes'],
 
-    'Food & Beverages': ['Drink foods', 'drinks', 'foods'],
+    'Food & Beverages': ['food_drink', 'drinks', 'food'],
 
-    'Books & Media': ['General Interest Books', 'technical books',
-                      'Imported books', 'Arts and Crafts', 'Art', 'audio'],
+    'Books & Media': ['books_general_interest', 'books_technical',
+                      'books_imported', 'arts_and_craftmanship', 'art', 'audio'],
 
-    'Office & Stationary': ['stationary store'],
+    'Office & Stationary': ['stationery'],
 
-    'Beauty & Health': ['HEALTH BEAUTY', 'Hygiene diapers', 'perfumery'],
+    'Beauty & Health': ['health_beauty', 'diapers_and_hygiene', 'perfumery'],
 
-    'Construction & Tools': ['Casa Construcao',
-                             'Construction Tools Construction',
+    'Construction & Tools': ['construction_tools_lights',
+                             'construction_tools_construction',
                              'Construction Tools Illumination',
                              'Construction Tools Garden',
-                             'Construction Tools Tools',
-                             'CONSTRUCTION SECURITY TOOLS'],
+                             'costruction_tools_tools',
+                             'construction_tools_safety'],
 
-    'Pets': ['pet Shop'],
+    'Pets': ['pet_shop'],
 
-    'Electricals': ['electrostile',
-                    'SIGNALIZATION AND SAFETY'],
+    'Electricals': ['electronics',
+                    'signaling_and_security'],
 
-    'Media & Entertainment': ['song', 'Blu Ray DVDs', 'cine photo',
-                              'cds music dvds'],
+    'Media & Entertainment': ['music', 'dvds_blu_ray', 'cine_photo',
+                              'cds_dvds_musicals'],
 
-    'Industry & Business': ['Agro Industria e Comercio',
-                            'Industry Commerce and Business'],
+    'Industry & Business': ['industry_commerce_and_business',
+                            'agro_industry_and_commerce'],
 
-    'Insurance & Services': ['insurance and services'],
+    'Insurance & Services': ['security_and_services'],
 
     'Flowers & Decorations': ['flowers']
 }
 
-print('##################################')
 df['category'] = ''
 
-# Her bir kategori için döngü
 for v in df['product category'].unique():
     for key, value_list in categories_dict.items():
         if v in value_list:
             df.loc[df['product category'] == v, 'category'] = key
 
-df.nunique()
-
-df.tail(20)
-
-df.isnull().sum()
-
 df.drop('product category', axis=1, inplace=True)
-
-df.info()
 
 list = ['order_purchase_timestamp', 'order_approved_at', 'order_delivered_carrier_date',
         'order_delivered_customer_date',
@@ -143,12 +149,9 @@ df['approval_time(dk)'] = (df['order_approved_at'] - df['order_purchase_timestam
 df['customer_wait_time(day)'] = (df['order_delivered_customer_date'] - df[
     'order_purchase_timestamp']).dt.total_seconds() / 86400
 
-
 df['purchase_weekday'] = df['order_purchase_timestamp'].dt.weekday
 
-
 df['purchase_weekday'].unique()
-
 
 df['purchase_weekday'] = df['purchase_weekday'].replace({5: 0, 6: 0, 0: 1, 1: 1, 2: 1, 3: 1, 4: 1})
 
@@ -161,11 +164,29 @@ special_days = {
     'Christmas': ['12-25']
 }
 
-
 df['special_day'] = 0
 
 for event, dates in special_days.items():
     for date in dates:
         df.loc[df['order_purchase_timestamp'].dt.strftime('%m-%d') == date, 'special_day'] = 1
 
-df.head(40)
+df['delivery_time_diff'] = (df['order_estimated_delivery_date'] - df[
+    'order_delivered_customer_date']).dt.total_seconds() / 86400
+
+df['price_freight_ratio'] = df['freight_value'] / df['price']
+
+df['product_volume_m3'] = df['product_length_cm'] * df['product_height_cm'] * df['product_width_cm'] / 100
+
+df['days_to_delivery_actual'] = (df['order_delivered_customer_date'] - df['order_purchase_timestamp']).dt.days
+
+df.drop(df[df['order_status'] == 'canceled'].index, inplace=True)
+
+df.drop(['order_status'], axis=1, inplace=True)
+
+df['season'] = df['order_purchase_timestamp'].dt.month
+
+label = ['q1', 'q2', 'q3', 'q4']
+
+df['season'] = pd.qcut(df['season'], 4, label)
+
+df.reset_index(inplace=True)
