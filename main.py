@@ -8,6 +8,8 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler, RobustScaler
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 pd.set_option('display.max_column', None)
 pd.set_option('display.width', 5000)
@@ -43,17 +45,13 @@ df.dropna(subset=['product category', 'product_weight_g', 'product_length_cm'
     , 'product_height_cm', 'product_width_cm', 'order_approved_at', 'order_delivered_carrier_date',
                   'order_delivered_customer_date'], inplace=True)
 
-gra.plot_numerical_col(df, num_cols=['price', 'payment_value', 'freight_value'], plot_type='kde')
-
-df = out.replace_all_outliers(df, ['price', 'payment_value', 'freight_value', 'product_weight_g', 'product_width_cm'])
-
-out.for_check(df, df.columns)
+df = out.remove_all_outliers(df, ['price', 'payment_value', 'freight_value', 'product_weight_g', 'product_width_cm'])
 
 result = out.grab_col_names(df)
 
 cat_cols, num_cols = result[0], result[1]
 
-df['product category'].unique()
+gra.plot_numerical_col(df, num_cols=['payment_value'], plot_type='kde')
 
 categories_dict = {
     'Furniture': ['office_furniture', 'furniture_decor', 'furniture_living_room',
@@ -149,9 +147,13 @@ df['approval_time(dk)'] = (df['order_approved_at'] - df['order_purchase_timestam
 df['customer_wait_time(day)'] = (df['order_delivered_customer_date'] - df[
     'order_purchase_timestamp']).dt.total_seconds() / 86400
 
+df['max_price'] = df.groupby('product_id')['price'].transform('max')
+df['discount'] = 100 - ((df['price'] / df['max_price']) * 100)
+df.drop(columns=['max_price'], inplace=True)
+
 df['purchase_weekday'] = df['order_purchase_timestamp'].dt.weekday
 
-df['purchase_weekday'].unique()
+df.head()
 
 df['purchase_weekday'] = df['purchase_weekday'].replace({5: 0, 6: 0, 0: 1, 1: 1, 2: 1, 3: 1, 4: 1})
 
@@ -189,4 +191,79 @@ label = ['q1', 'q2', 'q3', 'q4']
 
 df['season'] = pd.qcut(df['season'], 4, label)
 
-df.reset_index(inplace=True)
+########################################################################
+df['year'] = df['order_purchase_timestamp'].dt.year
+
+df['product_id'].value_counts()
+
+earnings_by_year_and_season = df.groupby(['year', 'season'])['payment_value'].sum()
+
+total_earnings = df.apply(lambda row: earnings_by_year_and_season[(row['year'], row['season'])], axis=1)
+
+df['total_earn_quantile'] = total_earnings
+
+earnings_by_year_season_seller = df.groupby(['year', 'season', 'seller_id'])['payment_value'].sum()
+
+total_earning_by_seller = df.apply(
+    lambda row: earnings_by_year_season_seller.get((row['year'], row['season'], row['seller_id']), 0), axis=1)
+
+df['total_earn_quantile_by_seller'] = total_earning_by_seller
+
+df.groupby(['season', 'year'])['total_earn_quantile'].mean()
+
+seller_review_score = df.groupby('seller_id')['review_score'].mean()
+
+df['seller_review_score'] = df['seller_id'].map(seller_review_score * 2)
+
+df['seller_id'].value_counts()
+
+df.describe().T
+
+df[df['freight_value'] > 50]['review_score'].mean()
+
+df['product_id'].value_counts()
+
+df['review_score'].value_counts()
+########################################################################
+
+df.groupby('category')['review_score'].mean()
+
+df_glad = df[
+    ['review_score', 'price', 'freight_value', 'payment_type', 'payment_installments', 'payment_value', 'category',
+     'approval_time(dk)', 'customer_wait_time(day)',
+     'discount', 'delivery_time_diff', 'price_freight_ratio', 'days_to_delivery_actual', 'seller_review_score'
+     ]]
+
+rs = RobustScaler()
+l = [col for col in df_glad.columns if col not in ['review_score', 'payment_type', 'category']]
+df_glad[l] = rs.fit_transform(df_glad[l])
+
+df_glad = en.one_hot_encoder(df_glad, ['payment_type', 'category'], drop_first=True)
+
+df_glad.head()
+
+y = df_glad['review_score']
+X = df_glad.drop(columns=['review_score'], axis=1)
+
+l_model = LinearRegression().fit(X, y)
+y_pred = l_model.predict(X)
+
+np.sqrt(mean_squared_error(y, y_pred))
+
+df_glad['review_score'].mean()
+
+r2_score(y, y_pred)
+
+from sklearn.ensemble import RandomForestRegressor
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+forest_reg = RandomForestRegressor()
+forest_reg.fit(X_train, y_train)
+
+y_pred = forest_reg.predict(X_train)
+forest_mse = mean_squared_error(y_train, y_pred)
+forest_rmse = np.sqrt(forest_mse)
+forest_rmse
+
+pd.DataFrame({'y': y_train, 'y_pred': y_pred})
