@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler, RobustScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from sklearn.model_selection import GridSearchCV, cross_validate, RandomizedSearchCV, validation_curve
 
 pd.set_option('display.max_column', None)
 pd.set_option('display.width', 5000)
@@ -194,6 +195,9 @@ df['season'] = pd.qcut(df['season'], 4, label)
 ########################################################################
 df['year'] = df['order_purchase_timestamp'].dt.year
 
+df.head()
+
+
 df['product_id'].value_counts()
 
 earnings_by_year_and_season = df.groupby(['year', 'season'])['payment_value'].sum()
@@ -217,13 +221,23 @@ df['seller_review_score'] = df['seller_id'].map(seller_review_score * 2)
 
 df['seller_id'].value_counts()
 
-df.describe().T
 
 df[df['freight_value'] > 50]['review_score'].mean()
 
 df['product_id'].value_counts()
 
 df['review_score'].value_counts()
+
+df.head()
+
+result = out.grab_col_names(df)
+
+cat_cols, num_cols = result[0], result[1]
+
+sum.cat_summary(df,cat_cols)
+
+for col in num_cols:
+    sum.target_summary_with_num(df, 'review_score', col)
 ########################################################################
 
 df.groupby('category')['review_score'].mean()
@@ -256,9 +270,26 @@ r2_score(y, y_pred)
 
 from sklearn.ensemble import RandomForestRegressor
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-forest_reg = RandomForestRegressor()
+forest_reg = RandomForestRegressor(random_state=42)
+
+forest_reg.get_params()
+
+rf_params = {"max_depth": [5, 8, None],
+             "max_features": [1, 3, 5, 7, "auto"],
+             "min_samples_split": [2, 5, 8, 15, 20],
+             "n_estimators": [100, 200, 500]}
+
+rf_best_grid = GridSearchCV(forest_reg, rf_params, cv=5, n_jobs=-1, verbose=True).fit(X, y)
+
+params = {'max_depth': None,
+          'max_features': 7,
+          'min_samples_split': 20,
+          'n_estimators': 500}
+
+forest_reg = forest_reg.set_params(**params)
+
 forest_reg.fit(X_train, y_train)
 
 y_pred = forest_reg.predict(X_train)
@@ -266,4 +297,8 @@ forest_mse = mean_squared_error(y_train, y_pred)
 forest_rmse = np.sqrt(forest_mse)
 forest_rmse
 
+cv_results = cross_validate(forest_reg, X_train, y_train, cv=5)
+print("Ortalama eğitim doğruluğu:", cv_results['train_score'].mean())
+
 pd.DataFrame({'y': y_train, 'y_pred': y_pred})
+
