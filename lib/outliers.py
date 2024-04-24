@@ -173,7 +173,7 @@ def grab_outliers(dataframe, col_name, index=False):
         return outlier_index
 
 
-def remove_specific_outlier(dataframe, col_name,q1=0.05,q3=0.95):
+def remove_specific_outlier(dataframe, col_name, q1=0.05, q3=0.95):
     """
     Bu fonskiyon istediğmiz kolondaki aykırı değerleri siler
     Parameters
