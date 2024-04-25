@@ -3,6 +3,7 @@ from streamlit import components
 import pandas as pd
 import numpy as np
 import plotly.express as px
+import base64
 
 df = pd.read_csv('datasets/final_dataset.csv')
 
