@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.neighbors import LocalOutlierFactor
 
 
-def outlier_thresholds(dataframe, column, q1=0.05, q3=0.95):
+def outlier_thresholds(dataframe, column, q1=0.01, q3=0.99):
     """
     Aykiri degerlerin alt limitini ve ust limitini donduren fonksiyon
     Parameters
@@ -173,7 +173,7 @@ def grab_outliers(dataframe, col_name, index=False):
         return outlier_index
 
 
-def remove_specific_outlier(dataframe, col_name, q1=0.05, q3=0.95):
+def remove_specific_outlier(dataframe, col_name, q1=0.01, q3=0.99):
     """
     Bu fonskiyon istediğmiz kolondaki aykırı değerleri siler
     Parameters
@@ -193,6 +193,35 @@ def remove_specific_outlier(dataframe, col_name, q1=0.05, q3=0.95):
     df_without_outliers = dataframe[~((dataframe[col_name] < low_limit) | (dataframe[col_name] > up_limit))]
     return df_without_outliers
 
+
+def remove_top_frequency(dataframe, col_name, threshold=0.01):
+    """
+    Belirli bir sütundaki en çok tekrar eden değerleri siler.
+
+    Parameters
+    ----------
+    dataframe: pandas.DataFrame
+        İşlenecek veri seti.
+    col_name: str
+        İşlenecek sütun adı.
+    threshold: float, optional
+        Silme eşiği, varsayılan olarak %1 olarak ayarlanmıştır.
+
+    Returns
+    -------
+    dataframe: pandas.DataFrame
+        Aykırı değerlerin kaldırıldığı veri seti.
+    """
+    # Sütun içindeki değerlerin frekanslarını hesapla
+    value_counts = dataframe[col_name].value_counts(normalize=True)
+
+    # Eşik değeri aşan en yüksek frekanslı değerleri belirle
+    top_values_to_remove = value_counts[value_counts > threshold].index.tolist()
+
+    # Belirlenen değerleri içermeyen veri setini döndür
+    dataframe = dataframe[~dataframe[col_name].isin(top_values_to_remove)]
+
+    return dataframe
 
 def remove_all_outliers(df, cols):
     """
