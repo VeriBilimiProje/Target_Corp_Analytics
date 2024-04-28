@@ -20,25 +20,25 @@ st.set_page_config(
 )
 html_code = """
 <div style="display: flex;">
-    <a href="https://linktr.ee/mrakar" style="margin-right: 10px;text-decoration: none; color: white;">
+    <a href="https://linktr.ee/mrakar" style="margin-right: 10px;text-decoration: none; color: black;">
         <div style="width: 100px; height: 100px; overflow: hidden; border-radius: 50%; border: 2px solid black;">
             <img src="https://media.licdn.com/dms/image/D4D03AQGcvyGbq29esQ/profile-displayphoto-shrink_400_400/0/1713544700654?e=1719446400&v=beta&t=8rNFjSu46qxavynGcNQTUXZ4kDO7ewEf_TYxViYLi5s" style="width: 100%; height: auto;">
         </div>
     <div style="text-align: center;">Muhammed AKAR</div>
     </a>
-    <a href="https://github.com/umitdkara" style="margin-right: 10px;text-decoration: none; color: white;">
+    <a href="https://github.com/umitdkara" style="margin-right: 10px;text-decoration: none; color: black;">
         <div style="width: 100px; height: 100px; overflow: hidden; border-radius: 50%; border: 2px solid black;">
             <img src="https://avatars.githubusercontent.com/u/154842224?v=4" style="width: 100%; height: auto;">
         </div>
     <div style="text-align: center;">Ümit KARA</div>
     </a>
-    <a href="https://github.com/ecan57" style="margin-right: 10px;text-decoration: none; color: white;">
+    <a href="https://github.com/ecan57" style="margin-right: 10px;text-decoration: none; color: black;">
         <div style="width: 100px; height: 100px; overflow: hidden; border-radius: 50%; border: 2px solid black;">
             <img src="https://avatars.githubusercontent.com/u/105751954?v=4" style="width: 100%; height: auto;">
         </div>
     <div style="text-align: center;">Emine CAN</div>
     </a>
-    <a href="https://github.com/leylalptekin" style="margin-right: 10px;text-decoration: none; color: white;">
+    <a href="https://github.com/leylalptekin" style="margin-right: 10px;text-decoration: none; color: black;">
         <div style="width: 100px; height: 100px; overflow: hidden; border-radius: 50%; border: 2px solid black;">
             <img src="https://avatars.githubusercontent.com/u/48180024?v=4" style="width: 100%; height: auto;">
         </div>
@@ -106,13 +106,13 @@ st.subheader('Proje Dosyaları')
 
 st.markdown('''
 <div style="display: flex;">
-    <a href="https://linktr.ee/mrakar" style="margin-right: 10px;text-decoration: none; color: white;">
+    <a href="https://linktr.ee/mrakar" style="margin-right: 10px;text-decoration: none; color: black;">
         <div style="width: 75px; height: 75px; overflow: hidden; border-radius: 50%; padding:10px;order: 2px solid black;">
             <img src="https://cdn.iconscout.com/icon/free/png-512/free-kaggle-3521526-2945029.png?f=webp&w=512" style="width: 100%; height: auto;">
         </div>
         <div style="text-align: center;">Kaggle</div>
     </a>
-       <a href="https://linktr.ee/mrakar" style="margin-right: 10px;text-decoration: none; color: white;">
+       <a href="https://linktr.ee/mrakar" style="margin-right: 10px;text-decoration: none; color: black;">
         <div style="width: 75px; height: 75px; overflow: hidden; border-radius: 50%;padding:10px;order: 2px solid black;">
             <img src="https://cdn.iconscout.com/icon/free/png-512/free-github-159-721954.png?f=webp&w=512" style="width: 100%; height: auto;">
         </div>
