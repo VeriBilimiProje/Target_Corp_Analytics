@@ -18,6 +18,9 @@ st.set_page_config(
         'About': "# This is a header. This is an *extremely* cool app!"
     }
 )
+
+st.sidebar.image("deployment/assets/logo.png" , use_column_width=True)
+
 html_code = """
 <div style="display: flex;">
     <a href="https://linktr.ee/mrakar" style="margin-right: 10px;text-decoration: none; color: black;">
