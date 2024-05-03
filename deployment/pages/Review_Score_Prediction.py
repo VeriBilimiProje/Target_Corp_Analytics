@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 
 # Load the pickled model
-model = joblib.load('deployment/log_reg.pkl')  # Replace 'log_reg.pkl' with your actual filename
+# model = joblib.load('deployment/log_reg.pkl')
 
 # Sayfa başlığı
 st.title('Review Score Prediction')

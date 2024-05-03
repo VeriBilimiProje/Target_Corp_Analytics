@@ -1,0 +1,32 @@
+body {
+    background-image: url("data:image/png;base64,{assets/background.jpg}");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
+
+/* Diğer stiller burada devam edecek */
+
+/* Popup stilleri */
+#popup {
+    display: none;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    overflow: hidden;
+}
+
+/* "Did You Know" içerik stilleri */
+.didyouknow_root {
+    box-shadow: rgba(77, 131, 132, 0.1) 0px 0px 0.5px 1px, rgba(0, 0, 0, 0.024) 0px 0.5px 0.9px, rgba(0, 0, 0, 0.035) 0px 1.4px 2.5px, rgba(0, 0, 0, 0.04)
+    0px 3.3px 6px, rgba(0, 0, 0, 0.06) 0px 11px 20px;
+    cursor: pointer;
+    padding: 0.5rem 20px;
+    background: rgb(255, 255, 255);
+    border-radius: 2rem;
+    margin: 1.75em 0px;
+    max-width: 1000px;
+    overflow: hidden;
+}
