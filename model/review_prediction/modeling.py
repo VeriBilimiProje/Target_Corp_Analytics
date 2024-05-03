@@ -3,8 +3,7 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.model_selection import GridSearchCV, cross_validate, RandomizedSearchCV, validation_curve
 import joblib
-
-
+from sklearn.preprocessing import MinMaxScaler
 
 pd.set_option('display.max_column', None)
 pd.set_option('display.width', 5000)
@@ -12,7 +11,6 @@ pd.set_option('display.width', 5000)
 df = pd.read_csv('datasets/dataset.csv')
 
 X, y = re.data_prep(df)
-
 lr_reg = LogisticRegression().fit(X, y)
 
 cv_results = cross_validate(lr_reg, X, y, cv=3, scoring=["accuracy", "f1", "roc_auc"])
@@ -23,9 +21,11 @@ cv_results['test_accuracy'].mean()
 
 joblib.dump(lr_reg, "deployment/review_model.pkl")
 
+y.head()
 
+X.head()
 re.base_models(X, y)
-
+y.inverse_transform([0,1])
 re.hyperparameter_optimization(X, y)
 
 #           accuracy        f1   roc_auc
