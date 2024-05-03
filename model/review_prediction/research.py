@@ -156,7 +156,6 @@ def data_prep(df):
          'customer_wait_day', 'seller_review_score', 'delay_time', 'distance_km', 'seller_popularity', 'discount'
          ]]
 
-
     cols_list = ['price', 'freight_value', 'payment_value',
                  'seller_review_score', 'delay_time', 'distance_km', 'discount']
 
