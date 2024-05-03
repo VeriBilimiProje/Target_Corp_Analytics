@@ -9,7 +9,7 @@ import logging
 
 
 # Load the model
-model = joblib.load("review_model.pkl")
+model = joblib.load("deployment/review_model.pkl")
 
 # Sayfa başlığı
 st.title('Review Score Prediction')
