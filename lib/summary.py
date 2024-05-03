@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
 
 def check_df(dataframe, head=5):
@@ -39,6 +40,17 @@ def num_summary(dataframe, numerical_col, plot=False):
 
 def target_summary_with_num(dataframe, target, numerical_col):
     print(dataframe.groupby(target).agg({numerical_col: "mean"}), end="\n\n\n")
+
+def target_summary_with_cat(dataframe, target, categorical_col):
+    print(pd.DataFrame({"TARGET_MEAN": dataframe.groupby(categorical_col)[target].mean()}), end="\n\n\n")
+
+def correlation_matrix(df, cols):
+    fig = plt.gcf()
+    fig.set_size_inches(10, 8)
+    plt.xticks(fontsize=10)
+    plt.yticks(fontsize=10)
+    fig = sns.heatmap(df[cols].corr(), annot=True, linewidths=0.5, annot_kws={'size': 12}, linecolor='w', cmap='RdBu')
+    plt.show(block=True)
 
 
 def rare_analyser(dataframe, target, cat_cols):

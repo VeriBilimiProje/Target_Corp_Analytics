@@ -13,13 +13,15 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import GridSearchCV, cross_validate, RandomizedSearchCV, validation_curve
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
-from sklearn.metrics import classification_report, roc_auc_score
+from sklearn.metrics import classification_report, roc_auc_score, RocCurveDisplay
 from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingClassifier
 from xgboost import XGBClassifier
 from catboost import CatBoostClassifier
 from sklearn.impute import KNNImputer
 import joblib
+from lightgbm import LGBMClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 
 pd.set_option('display.max_column', None)
 pd.set_option('display.width', 5000)
@@ -45,33 +47,6 @@ gra.plot_numerical_col(df, num_cols=num_cols, plot_type='kde')
 
 gra.plot_categoric_col(df, cat_cols)
 
-df.describe().T
-
-########################################################################
-# MISSING DATA ANALYSIS & OUTLIERS DATA ANALYSIS
-########################################################################
-df.head()
-
-df.shape
-df.isnull().sum()
-
-out.for_check(df, df.columns)
-
-df = out.remove_all_outliers(df, ['price', 'payment_value', 'freight_value', 'product_weight_g', 'product_width_cm',
-                                  'payment_installments', 'payment_value', 'distance_km'])
-
-df.drop(df[df['order_status'] == 'canceled'].index, inplace=True)
-
-sum.cat_summary(df, cat_cols)
-
-df.info()
-
-df.drop_duplicates(subset=['order_id'], keep='first', inplace=True)
-
-df.drop_duplicates(subset=['review_id'], keep='first', inplace=True)
-
-df.drop(df[df['payment_installments'] == 0].index, inplace=True)
-
 ########################################################################
 # FEATURE EXTRACTION
 ########################################################################
@@ -89,13 +64,27 @@ for col in list_of_date_columns:
         df['review_creation_date'] = pd.to_datetime(df['review_creation_date'].str[:10], format='%Y-%m-%d')
         print(f'{col} dont')
 
-df.head()
+max_value_count = df.seller_id.value_counts().max()
+seller = df.seller_id.value_counts().to_dict()
+seller_popularity = []
+for _id in df.seller_id.values:
+    seller_popularity.append(seller[_id])
+df['seller_popularity'] = seller_popularity
+
+df['seller_popularity'] = pd.cut(df['seller_popularity'], bins=[0, 300, 1000, np.inf], labels=['C', 'B', 'A'])
+
+df.drop_duplicates(subset=['order_id'], keep='first', inplace=True)
+
+df.drop_duplicates(subset=['review_id'], keep='first', inplace=True)
+
+df.drop(df[df['payment_installments'] == 0].index, inplace=True)
+
+df['estimated_days'] = (df['order_estimated_delivery_date'] - df['order_purchase_timestamp']).dt.days
+df['ships_in'] = (df['shipping_limit_date'] - df['order_purchase_timestamp']).dt.days
 
 df['shipping_days'] = (df['order_delivered_customer_date'] - df['order_delivered_carrier_date']).dt.days
 
 df['answer_diff'] = (df['review_answer_timestamp'] - df['review_creation_date']).dt.total_seconds() / 86400
-
-df['approval_time'] = (df['order_approved_at'] - df['order_purchase_timestamp']).dt.total_seconds() / 60
 
 df['customer_wait_day'] = (df['order_delivered_customer_date'] - df[
     'order_purchase_timestamp']).dt.total_seconds() / 86400
@@ -103,30 +92,10 @@ df['customer_wait_day'] = (df['order_delivered_customer_date'] - df[
 df['quantity'] = (df['payment_value'] / (df['price'] + df['freight_value'])).astype(int)
 
 df['quantity'].replace(0, 1, inplace=True)
-
-# df['purchase_weekday'] = df['order_purchase_timestamp'].dt.weekday
-#
-# df['purchase_weekday'] = df['purchase_weekday'].replace({5: 0, 6: 0, 0: 1, 1: 1, 2: 1, 3: 1, 4: 1})
-#
-# special_days = {
-#     'New Year': ['01-01'],
-#     'Carnival': ['02-24', '02-25', '02-26'],
-#     'Valentine\'s Day': ['06-12'],
-#     'Children\'s Day': ['10-12'],
-#     'Black Friday': ['11-27'],
-#     'Christmas': ['12-25']
-# }
-#
-# df['special_day'] = 0
-#
-# for event, dates in special_days.items():
-#     for date in dates:
-#         df.loc[df['order_purchase_timestamp'].dt.strftime('%m-%d') == date, 'special_day'] = 1
+df['discount'] = ((df['freight_value'] + df['price']) * df['quantity']) - df['payment_value']
 
 df['delay_time'] = (df['order_estimated_delivery_date'] - df[
     'order_delivered_customer_date']).dt.total_seconds() / 86400
-
-df.drop(df[df['order_status'] == 'canceled'].index, inplace=True)
 
 df.drop(['order_status'], axis=1, inplace=True)
 
@@ -138,40 +107,35 @@ df['season'] = pd.qcut(df['season'], 4, label)
 
 df['year'] = df['order_purchase_timestamp'].dt.year
 
-# earnings_by_year_and_season = df.groupby(['year', 'season'])['payment_value'].sum()
-#
-# total_earnings = df.apply(lambda row: earnings_by_year_and_season[(row['year'], row['season'])], axis=1)
-
-# df['total_earn_quantile'] = total_earnings
-
-# earnings_by_year_season_seller = df.groupby(['year', 'season', 'seller_id'])['payment_value'].sum()
-
-# total_earning_by_seller = df.apply(
-#     lambda row: earnings_by_year_season_seller.get((row['year'], row['season'], row['seller_id']), 0), axis=1)
-
-# df['total_earn_quantile_by_seller'] = total_earning_by_seller
-
 seller_review_score = df.groupby('seller_id')['review_score'].mean()
 
 df['seller_review_score'] = df['seller_id'].map(seller_review_score * 2)
 
 df.drop(df[df['year'] == 2016].index, inplace=True)
 
-df[['payment_type', 'product category']] = en.rare_encoder(df[['payment_type', 'product category']], 0.06)
-
-df.drop(df[df['shipping_days'] <= 0].index, inplace=True)
+df[['payment_type']] = en.rare_encoder(df[['payment_type']], 0.06)
+df[['product category']] = en.rare_encoder(df[['product category']], 0.02)
 
 df.drop(df[df['shipping_days'] <= 0].index, inplace=True)
 
 df.drop(df[df['product_weight_g'] == 0].index, inplace=True)
-
-df.drop(df[df['approval_time'] == 0].index, inplace=True)
 
 df.drop(df[df['distance_km'] == 0].index, inplace=True)
 
 df.drop(df[(df['order_delivered_carrier_date'] - df['order_purchase_timestamp']).dt.days < 0].index, inplace=True)
 
 df.drop(df[(df['order_delivered_carrier_date'] - df['order_approved_at']).dt.days < 0].index, inplace=True)
+
+df.drop(df[df['review_score'] == 3].index, inplace=True)
+
+df['customer_wait_day'] = pd.cut(df['customer_wait_day'], bins=[0, 8, 16, 25, 40, 61],
+                                 labels=['Very_Fast', 'Fast', 'Neutral', 'Slow', 'Worst'])
+
+df['estimated_days'] = pd.cut(df['estimated_days'], bins=[0, 8, 16, 25, 40, 61],
+                              labels=['Very_Fast', 'Fast', 'Neutral', 'Slow', 'Worst'])
+
+df['ships_in'] = pd.cut(df['ships_in'], bins=[0, 4, 8, 16, 28, 61],
+                        labels=['Very_Fast', 'Fast', 'Neutral', 'Slow', 'Worst'])
 
 encoded_class = {1: 'Not Satisfied',
                  2: 'Not Satisfied',
@@ -181,64 +145,60 @@ encoded_class = {1: 'Not Satisfied',
 
 df['review_score'] = df['review_score'].map(encoded_class)
 
+df.head()
+
+df.isnull().sum()
+
 ########################################################################
 # MODELS
 ########################################################################
 
 df_glad = df[
     ['review_score', 'price', 'freight_value', 'payment_type', 'payment_installments', 'payment_value',
-     'approval_time', 'customer_wait_day', 'seller_review_score', 'product category', 'quantity', 'year', 'season',
-     'delay_time', 'distance_km', 'cities_status'
+     'customer_wait_day', 'seller_review_score', 'delay_time', 'distance_km', 'seller_popularity', 'discount'
      ]]
 
-df_glad = out.remove_top_frequency(df_glad, 'freight_value', threshold=0.002)
-
-df['price'] = np.log(df['price'])
-df['payment_value'] = np.log(df['payment_value'])
-df['approval_time'] = np.log(df['approval_time'])
-df['customer_wait_day'] = np.log(df['customer_wait_day'])
-df['seller_review_score'] = np.log(df['seller_review_score'])
-df['quantity'] = np.log(df['quantity'])
-df['year'] = np.log(df['year'])
-df['distance_km'] = np.log(df['distance_km'])
-
 result = out.grab_col_names(df_glad)
-
 cat_cols, num_cols = result[0], result[1]
 
-sum.cat_summary(df, cat_cols)
+# sum.correlation_matrix(df_glad,num_cols)
+#
+# sum.cat_summary(df_glad,cat_cols)
+#
+# sum.target_summary_with_cat(df_glad,'review_score',cat_cols)
+#
+for i in num_cols:
+    sum.target_summary_with_num(df_glad, 'review_score', i)
 
-gra.plot_numerical_col(df_glad, num_cols=num_cols, plot_type='kde')
+sum.cat_summary(df_glad,cat_cols)
 
-cols_list = ['price', 'freight_value', 'payment_value', 'approval_time',
-             'customer_wait_day', 'seller_review_score', 'quantity', 'year', 'delay_time', 'distance_km']
+cols_list = ['price', 'freight_value', 'payment_value',
+             'seller_review_score', 'delay_time', 'distance_km', 'discount']
 
-df_glad = out.remove_all_outliers(df_glad, cols_list)
+df_glad = out.replace_all_outliers(df_glad, cols_list)
 
-df_glad['approval_time'].fillna(2206, inplace=True)
-df_glad['customer_wait_day'].fillna(40, inplace=True)
+df_glad['price'] = np.log(df_glad['price'])
+df_glad['payment_value'] = np.log(df_glad['payment_value'])
+df_glad['seller_review_score'] = np.log(df_glad['seller_review_score'])
+df_glad['distance_km'] = np.log(df_glad['distance_km'])
+
 df_glad['delay_time'].fillna(-14, inplace=True)
+df_glad['distance_km'].fillna(428, inplace=True)
+df_glad['customer_wait_day'].fillna('Worst', inplace=True)
 df_glad.dropna(inplace=True)
 
-# corr = df[num_cols].corr()
-# cor_matrix = corr.abs()
-# upper_triangle_matrix = cor_matrix.where(np.triu(np.ones(cor_matrix.shape), k=1).astype(bool))
-# drop_list = [col for col in upper_triangle_matrix if any(upper_triangle_matrix[col] > 0.9)]
-# sns.set(rc={'figure.figsize': (20, 20)})
-# sns.heatmap(corr, cmap='RdBu')
-# plt.show()
-
-df_glad = en.one_hot_encoder(df_glad, ['payment_type', 'season', 'cities_status'], drop_first=True)
+df_glad = en.one_hot_encoder(df_glad, ['payment_type', 'customer_wait_day', 'seller_popularity'], drop_first=True)
 
 df_glad = en.label_encoder(df_glad, 'review_score')
-df_glad = en.label_encoder(df_glad, 'product category')
 
-rs = RobustScaler()
+rs = MinMaxScaler()
 l = [col for col in df_glad.columns if col not in ['review_score']]
 df_glad[l] = rs.fit_transform(df_glad[l])
 
 y = df_glad['review_score']
 X = df_glad.drop(columns=['review_score'], axis=1)
+
+df_glad.head()
 
 ########################################################################
 # Model 1) Linear Regression
@@ -247,47 +207,61 @@ X = df_glad.drop(columns=['review_score'], axis=1)
 
 l_model = LogisticRegression().fit(X, y)
 
-joblib.dump(l_model, "deployment/log_reg.pkl")
+param = {'C': [0.0001, 0.001, 0.01, 0.1, 1, 10, 20, 30, 40]}
+
+LR = GridSearchCV(l_model, param, cv=3, refit=False, return_train_score=True, scoring='roc_auc')
+LR.fit(X, y)
+
+l_model = l_model.set_params(**LR.best_params_)
 
 cv_results = cross_validate(l_model, X, y, cv=10, scoring=["accuracy", "f1", "roc_auc"])
 cv_results['test_accuracy'].mean()
-# 0.7769250469005519
-# 0.816921068648272
+# 0.8248765502283758
+# 0.8808304779078979
 cv_results['test_f1'].mean()
-# 0.8744067332593181
-# 0.8914220997748533
+# 0.9037088841310366
+# 0.9327284353212955
 cv_results['test_roc_auc'].mean()
-# 0.5244540528559379
-# 0.7384002359670425
+# 0.5484968244473337
+# 0.7990957279062073
 
-df.shape
+
+RocCurveDisplay.from_estimator(l_model, X, y)
+plt.title('ROC Curve')
+plt.plot([0, 1], [0, 1], 'r--')
+plt.show()
+
+df_glad['review_score'].value_counts()
+
 ########################################################################
 # Model 2) Random Forest Regression
 ########################################################################
-from sklearn.ensemble import RandomForestClassifier
 
 forest_reg = RandomForestClassifier(random_state=42)
-
-forest_reg.get_params()
 
 rf_params = {"max_depth": [5, 8, None],
              "max_features": [3, 5, 7, "sqrt", "auto"],
              "min_samples_split": [2, 5, 8, 15, 20],
              "n_estimators": [100, 200, 500]}
 
+x = {'max_depth': 5,
+     'max_features': 7,
+     'min_samples_split': 5,
+     'n_estimators': 100}
+
 rf_best_grid = GridSearchCV(forest_reg, rf_params, cv=10, n_jobs=-1, verbose=True).fit(X, y)
 
-forest_reg = forest_reg.set_params(**rf_best_grid.best_params_)
+forest_reg = forest_reg.set_params(**x)
 
-forest_reg.fit(X, y)
+forest_reg = forest_reg.fit(X, y)
 
 cv_results = cross_validate(forest_reg, X, y, cv=10, scoring=["accuracy", "f1", "roc_auc"])
 cv_results['test_accuracy'].mean()
-# 0.7630486338152581
+# 0.8923785685665253
 cv_results['test_f1'].mean()
-# 0.8462710315551891
+# 0.9408376843109322
 cv_results['test_roc_auc'].mean()
-# 0.6653456313884493
+# 0.7621464859119431
 
 ########################################################################
 # Model 3) CART
@@ -298,25 +272,25 @@ cart_model.fit(X, y)
 
 cv_results = cross_validate(cart_model, X, y, cv=10, scoring=["accuracy", "f1", "roc_auc"])
 cv_results['test_accuracy'].mean()
-# 0.6546813197307091
+# 0.7034600008390696
 cv_results['test_f1'].mean()
-# 0.7609614618648842
+# 0.8063544245071561
 cv_results['test_roc_auc'].mean()
-# 0.5737582127798337
+# 0.5915474978828692
 ########################################################################
 # Model 3) XGBOOST
 ########################################################################
 xg_model = XGBClassifier(objective='reg:squarederror')
 
-xg_model.fit(X, y)
+xg_model = xg_model.fit(X, y)
 
 cv_results = cross_validate(xg_model, X, y, cv=10, scoring=["accuracy", "f1", "roc_auc"])
 cv_results['test_accuracy'].mean()
-# 0.6838286996825176
+# 0.5927073446043444
 cv_results['test_f1'].mean()
-# 0.7539813138016057
+# 0.6626728520667822
 cv_results['test_roc_auc'].mean()
-# 0.6156301372796502
+# 0.6072938920058083
 
 ########################################################################
 # Model 3) CATBOOST
@@ -326,12 +300,111 @@ cat_model = CatBoostClassifier().fit(X, y)
 
 cv_results = cross_validate(cat_model, X, y, cv=10, scoring=["accuracy", "f1", "roc_auc"])
 cv_results['test_accuracy'].mean()
-# 0.6649307839796682
+# 0.611522356744368
 cv_results['test_f1'].mean()
-# 0.7309140355724563
+# 0.6909165576165092
 cv_results['test_roc_auc'].mean()
-# 0.6317152047313181
+# 0.6358588778104648
 
+
+########################################################################
+# Model 3) KNN
+########################################################################
+
+knn_model = KNeighborsClassifier()
+
+knn_params = {"n_neighbors": range(2, 50)}
+
+knn_gs_best = GridSearchCV(knn_model,
+                           knn_params,
+                           cv=5,
+                           n_jobs=-1,
+                           verbose=1).fit(X, y)
+
+knn_final = knn_model.set_params(**knn_gs_best.best_params_)
+
+cv_results = cross_validate(knn_final, X, y, cv=10, scoring=["accuracy", "f1", "roc_auc"])
+cv_results['test_accuracy'].mean()
+# 0.8812944167620393
+cv_results['test_f1'].mean()
+# 0.9334593883193723
+cv_results['test_roc_auc'].mean()
+# 0.7467817359651997
+
+########################################################################
+# Model 3) LightGBM
+########################################################################
+lgbm_model = LGBMClassifier(random_state=17)
+
+lgbm_model = lgbm_model.fit(X, y)
+
+cv_results = cross_validate(lgbm_model, X, y, cv=10, scoring=["accuracy", "f1", "roc_auc"])
+cv_results['test_accuracy'].mean()
+# 0.7241318072463834
+cv_results['test_f1'].mean()
+# 0.8099357471188142
+cv_results['test_roc_auc'].mean()
+# 0.6684717949138276
+
+########################################################################
+# Model 3) Adaboost
+########################################################################
+ada_reg = AdaBoostClassifier(random_state=42)
+ada_reg.get_params()
+
+adab_params = {"learning_rate": [0.0001, 0.001, 0.01, 0.1, 1, 10,],
+               "n_estimators": [50,100,200,300, 500]}
+
+ada_best_grid = GridSearchCV(ada_reg, adab_params, cv=10, n_jobs=-1, verbose=True).fit(X, y)
+
+ada_reg = ada_reg.set_params(**ada_best_grid.best_params_)
+
+cv_results = cross_validate(ada_reg, X, y, cv=10, scoring=["accuracy", "f1", "roc_auc"])
+cv_results['test_accuracy'].mean()
+# 0.8923785685665253
+cv_results['test_f1'].mean()
+# 0.9408376843109322
+cv_results['test_roc_auc'].mean()
+
+########################################################################
+# Model 3) GBM
+########################################################################
+gbm_reg = GradientBoostingClassifier(random_state=42)
+gbm_reg.get_params()
+
+gbm_params = {"learning_rate": [0.0001, 0.001, 0.01, 0.1, 1, 10,],
+              "max_depth": [3, 5,8,10],
+              "n_estimators": [100,500, 1000],
+              "subsample": [1, 0.5, 0.7,2]}
+
+gbm_best_grid = GridSearchCV(gbm_reg, gbm_params, cv=10, n_jobs=-1, verbose=True).fit(X, y)
+
+gbm_reg = gbm_reg.set_params(**gbm_best_grid.best_params_)
+
+cv_results = cross_validate(gbm_reg, X, y, cv=10, scoring=["accuracy", "f1", "roc_auc"])
+cv_results['test_accuracy'].mean()
+# 0.8923785685665253
+cv_results['test_f1'].mean()
+# 0.9408376843109322
+cv_results['test_roc_auc'].mean()
+
+
+########################################################################
+
+def plot_importance(model, features, num=len(X), save=False):
+    feature_imp = pd.DataFrame({'Value': model.feature_importances_, 'Feature': features.columns})
+    plt.figure(figsize=(10, 10))
+    sns.set(font_scale=1)
+    sns.barplot(x="Value", y="Feature", data=feature_imp.sort_values(by="Value",
+                                                                     ascending=False)[0:num])
+    plt.title('Features')
+    plt.tight_layout()
+    plt.show()
+    if save:
+        plt.savefig('importances.png')
+
+
+plot_importance(forest_reg, X)
 
 # df.drop(df[df['review_score'] == 5].head(30000).index, inplace=True)
 
