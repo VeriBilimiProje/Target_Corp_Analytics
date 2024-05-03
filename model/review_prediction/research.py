@@ -156,15 +156,15 @@ def data_prep(df):
          'customer_wait_day', 'seller_review_score', 'delay_time', 'distance_km', 'seller_popularity', 'discount'
          ]]
 
-    cols_list = ['price', 'freight_value', 'payment_value',
-                 'seller_review_score', 'delay_time', 'distance_km', 'discount']
+    # cols_list = ['price', 'freight_value', 'payment_value',
+    #              'seller_review_score', 'delay_time', 'distance_km', 'discount']
 
-    df_final = out.replace_all_outliers(df_final, cols_list)
+    # df_final = out.replace_all_outliers(df_final, cols_list)
 
-    df_final['price'] = np.log(df_final['price'])
-    df_final['payment_value'] = np.log(df_final['payment_value'])
-    df_final['seller_review_score'] = np.log(df_final['seller_review_score'])
-    df_final['distance_km'] = np.log(df_final['distance_km'])
+    # df_final['price'] = np.log(df_final['price'])
+    # df_final['payment_value'] = np.log(df_final['payment_value'])
+    # df_final['seller_review_score'] = np.log(df_final['seller_review_score'])
+    # df_final['distance_km'] = np.log(df_final['distance_km'])
 
     df_final['delay_time'].fillna(-14, inplace=True)
     df_final['distance_km'].fillna(428, inplace=True)
@@ -175,9 +175,9 @@ def data_prep(df):
 
     df_final = en.label_encoder(df_final, 'review_score')
 
-    rs = MinMaxScaler()
-    l = [col for col in df_final.columns if col not in ['review_score']]
-    df_final[l] = rs.fit_transform(df_final[l])
+    # rs = MinMaxScaler()
+    # l = [col for col in df_final.columns if col not in ['review_score']]
+    # df_final[l] = rs.fit_transform(df_final[l])
 
     y = df_final['review_score']
     X = df_final.drop(columns=['review_score'], axis=1)
