@@ -81,10 +81,11 @@ def grab_col_names(dataframe, cat_th=10, car_th=30):
     cat_cols = [col for col in cat_cols if col not in cat_but_car]
 
     # num_cols
-    num_cols = [col for col in dataframe.columns if dataframe[col].dtypes != "O"]
+    num_cols = [col for col in dataframe.columns if dataframe[col].dtypes not in ["O", 'datetime64[ns]']]
     num_cols = [col for col in num_cols if col not in num_but_cat]
 
-    binary_cols = [col for col in dataframe.columns if dataframe[col].dtype not in [int, float] and dataframe[col].nunique() == 2]
+    binary_cols = [col for col in dataframe.columns if
+                   dataframe[col].dtype not in [int, float] and dataframe[col].nunique() == 2]
 
     print(f"Observations: {dataframe.shape[0]}")
     print(f"Variables: {dataframe.shape[1]}")
@@ -94,8 +95,7 @@ def grab_col_names(dataframe, cat_th=10, car_th=30):
     print(f'num_but_cat: {len(num_but_cat)}')
     print(f'binary_cols: {len(binary_cols)}')
 
-
-    return cat_cols, num_cols, cat_but_car,binary_cols
+    return cat_cols, num_cols, cat_but_car, binary_cols
 
 
 def check_outlier(dataframe, column):
@@ -113,7 +113,7 @@ def check_outlier(dataframe, column):
 
 
     """
-    if dataframe[column].dtype != 'O':
+    if dataframe[column].dtype in ['float', 'int']:
         low, up = outlier_thresholds(dataframe, column)
         if dataframe[(dataframe[column] > up) | (dataframe[column] < low)].any(axis=None):
             return True
@@ -189,7 +189,7 @@ def remove_specific_outlier(dataframe, col_name, q1=0.05, q3=0.95):
             Aykırı değerlerin silindiği dataframe i döner
 
     """
-    low_limit, up_limit = outlier_thresholds(dataframe, col_name,q1=q1,q3=q3)
+    low_limit, up_limit = outlier_thresholds(dataframe, col_name, q1=q1, q3=q3)
     df_without_outliers = dataframe[~((dataframe[col_name] < low_limit) | (dataframe[col_name] > up_limit))]
     return df_without_outliers
 
@@ -222,6 +222,7 @@ def remove_top_frequency(dataframe, col_name, threshold=0.01):
     dataframe = dataframe[~dataframe[col_name].isin(top_values_to_remove)]
 
     return dataframe
+
 
 def remove_all_outliers(df, cols):
     """

@@ -1,25 +1,14 @@
 import numpy as np
 import pandas as pd
-from lib import encoding as en, outliers as out, summary as sum, graphic as gra
-from lib import outliers as out, summary as sum, encoding as en
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.cluster import KMeans
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split, cross_val_score
+from lib import outliers as out, encoding as en
 from sklearn.preprocessing import LabelEncoder, StandardScaler, RobustScaler, MinMaxScaler
-from sklearn.linear_model import LinearRegression, LogisticRegression
-
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-from sklearn.model_selection import GridSearchCV, cross_validate, RandomizedSearchCV, validation_curve
-from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
-from sklearn.metrics import classification_report, roc_auc_score, RocCurveDisplay
-from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV, cross_validate
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import GradientBoostingClassifier, AdaBoostClassifier
 from xgboost import XGBClassifier
 from catboost import CatBoostClassifier
-from sklearn.impute import KNNImputer
-import joblib
 from lightgbm import LGBMClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
@@ -27,35 +16,7 @@ from sklearn.svm import SVC
 pd.set_option('display.max_column', None)
 pd.set_option('display.width', 5000)
 
-data = pd.read_csv('datasets/final_dataset.csv')
 
-################################################
-# 1. Exploratory Data Analysis
-################################################
-
-result = out.grab_col_names(data)
-
-cat_cols, num_cols = result[0], result[1]
-
-sum.check_df(data)
-
-sum.cat_summary(data, cat_cols)
-
-for i in num_cols:
-    sum.target_summary_with_num(data, 'review_score', i)
-
-for i in cat_cols:
-    sum.target_summary_with_cat(data, 'review_score', i)
-
-sum.correlation_matrix(data, num_cols)
-
-gra.plot_numerical_col(data, num_cols=num_cols, plot_type='kde')
-
-gra.plot_categoric_col(data, cat_cols)
-
-########################################################################
-# FEATURE EXTRACTION
-########################################################################
 def data_prep(df):
     list_of_date_columns = ['order_purchase_timestamp', 'order_approved_at', 'order_delivered_carrier_date',
                             'order_delivered_customer_date', 'order_estimated_delivery_date',
@@ -69,7 +30,11 @@ def data_prep(df):
             df['review_creation_date'] = pd.to_datetime(df['review_creation_date'].str[:10], format='%Y-%m-%d')
             print(f'{col} dont')
 
-    max_value_count = df.seller_id.value_counts().max()
+    result = out.grab_col_names(df)
+    cat_cols, num_cols = result[0], result[1]
+
+    out.replace_all_outliers(df, num_cols)
+
     seller = df.seller_id.value_counts().to_dict()
     seller_popularity = []
     for _id in df.seller_id.values:
@@ -156,15 +121,10 @@ def data_prep(df):
          'customer_wait_day', 'seller_review_score', 'delay_time', 'distance_km', 'seller_popularity', 'discount'
          ]]
 
-    # cols_list = ['price', 'freight_value', 'payment_value',
-    #              'seller_review_score', 'delay_time', 'distance_km', 'discount']
-
-    # df_final = out.replace_all_outliers(df_final, cols_list)
-
-    # df_final['price'] = np.log(df_final['price'])
-    # df_final['payment_value'] = np.log(df_final['payment_value'])
-    # df_final['seller_review_score'] = np.log(df_final['seller_review_score'])
-    # df_final['distance_km'] = np.log(df_final['distance_km'])
+    df_final['price'] = np.log(df_final['price'])
+    df_final['payment_value'] = np.log(df_final['payment_value'])
+    df_final['seller_review_score'] = np.log(df_final['seller_review_score'])
+    df_final['distance_km'] = np.log(df_final['distance_km'])
 
     df_final['delay_time'].fillna(-14, inplace=True)
     df_final['distance_km'].fillna(428, inplace=True)
@@ -175,9 +135,9 @@ def data_prep(df):
 
     df_final = en.label_encoder(df_final, 'review_score')
 
-    # rs = MinMaxScaler()
-    # l = [col for col in df_final.columns if col not in ['review_score']]
-    # df_final[l] = rs.fit_transform(df_final[l])
+    rs = RobustScaler()
+    l = [col for col in df_final.columns if col not in ['review_score']]
+    df_final[l] = rs.fit_transform(df_final[l])
 
     y = df_final['review_score']
     X = df_final.drop(columns=['review_score'], axis=1)
