@@ -83,11 +83,11 @@ html_sticky_footer = """
 <footer>
     <div style="display: flex; align-items: center;">
         <div>
-            <a href="https://linktr.ee/mrakar" style="text-decoration: none; color: #333; margin: 0 10px;"><img src="https://media.licdn.com/dms/image/D4D03AQGcvyGbq29esQ/profile-displayphoto-shrink_400_400/0/1713544700654?e=1719446400&v=beta&t=8rNFjSu46qxavynGcNQTUXZ4kDO7ewEf_TYxViYLi5s" style="width: 30px; height: 30px; border-radius: 50%;"></a>
-        <a href="https://github.com/umitdkara" style="text-decoration: none; color: #333; margin: 0 10px;"><img src="https://avatars.githubusercontent.com/u/154842224?v=4" style="width: 30px; height: 30px; border-radius: 50%;"></a>
+            <a href="https://kaggle.com" style="text-decoration: none; color: #333; margin: 0 10px;"><img src="https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/189_Kaggle_logo_logos-512.png" style="width: 30px; height: 30px; border-radius: 50%;"></a>
+        <a href="https://github.com/VeriBilimiProje" style="text-decoration: none; color: #333; margin: 0 10px;"><img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" style="width: 30px; height: 30px; border-radius: 50%;"></a>
         </div>
         <div style="margin-left: 10px;">
-            <span style="font-size: 12px; color: #666;">data sapiens &copy;2024</span>
+            <span style="font-size: 12px; color: #666;">Data Sapiens &copy;2024</span>
         </div>
     </div>
     <div>
@@ -95,6 +95,7 @@ html_sticky_footer = """
         <a href="https://github.com/umitdkara" style="text-decoration: none; color: #333; margin: 0 10px;"><img src="https://avatars.githubusercontent.com/u/154842224?v=4" style="width: 30px; height: 30px; border-radius: 50%;"></a>
         <a href="https://github.com/ecan57" style="text-decoration: none; color: #333; margin: 0 10px;"><img src="https://avatars.githubusercontent.com/u/105751954?v=4" style="width: 30px; height: 30px; border-radius: 50%;"></a> 
         <a href="https://github.com/leylalptekin" style="text-decoration: none; color: #333; margin: 0 10px;"><img src="https://avatars.githubusercontent.com/u/48180024?v=4" style="width: 30px; height: 30px; border-radius: 50%;"></a>
+        <a href=" " style="text-decoration: none; color: #333; margin: 0 10px;"><img src="https://i.hizliresim.com/6uhz7is.png" style="width: 30px; height: 30px; border-radius: 50%;"></a>
     </div>
 </footer>
 """
@@ -102,11 +103,3 @@ html_sticky_footer = """
 # Display the custom sticky footer
 st.markdown(html_sticky_footer, unsafe_allow_html=True)
 
-# Ana Ekran Giriş Sayfası
-st.image("deployment/assets/background.jpg")
-
-html("""
-<style>
-    @import url('./style.css'); 
-</style>
-""")
