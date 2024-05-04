@@ -1,9 +1,8 @@
 from model.review_prediction import research as re
 import pandas as pd
-from sklearn.linear_model import LinearRegression, LogisticRegression
-from sklearn.model_selection import GridSearchCV, cross_validate, RandomizedSearchCV, validation_curve
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import cross_validate
 import joblib
-from sklearn.preprocessing import MinMaxScaler
 
 pd.set_option('display.max_column', None)
 pd.set_option('display.width', 5000)
@@ -21,15 +20,12 @@ cv_results['test_accuracy'].mean()
 
 joblib.dump(lr_reg, "deployment/review_model.pkl")
 
-y.head()
-
-X.head()
 re.base_models(X, y)
-y.inverse_transform([0,1])
+
 re.hyperparameter_optimization(X, y)
 
 #           accuracy        f1   roc_auc
-# LR        0.881353  0.933096  0.794200
+# LR        0.882363  0.933584  0.785310
 # KNN       0.872191  0.927221  0.724845 || 0.883279  0.934255  0.771098
 # SVC       0.885738  0.935655  0.740156
 # CART      0.785999  0.870041  0.643320 || 0.890884  0.938397  0.760589
