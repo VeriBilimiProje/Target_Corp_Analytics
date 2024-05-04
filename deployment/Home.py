@@ -1,8 +1,12 @@
+import base64
 import streamlit as st
 from streamlit.components.v1 import html
 import pandas as pd
 import seaborn as sns
 import numpy as np
+from PIL import Image, ImageDraw, ImageFont
+
+
 
 st.set_page_config(
     page_title="data sapiens",
@@ -97,6 +101,9 @@ html_sticky_footer = """
 
 # Display the custom sticky footer
 st.markdown(html_sticky_footer, unsafe_allow_html=True)
+
+# Ana Ekran Giriş Sayfası
+st.image("deployment/assets/background.jpg")
 
 html("""
 <style>

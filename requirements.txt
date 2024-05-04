@@ -9,3 +9,4 @@ plotly~=5.21.0
 xgboost~=2.0.3
 catboost~=1.2.5
 joblib==1.2.0
+st_pages
