@@ -6,10 +6,8 @@ from datetime import datetime, timedelta
 import os
 import logging
 
-
-
 # Load the model
-model = joblib.load("review_model.pkl")
+model = joblib.load("deployment/review_model.pkl")
 
 # Sayfa başlığı
 st.title('Review Score Prediction')
@@ -69,7 +67,7 @@ with tab3:
         default_delivery_date = default_purchase_date + timedelta(days=1)
     order_delivered_timestamp = st.date_input('Müşteriye Ulaşan Tarih', value=default_delivery_date)
 
-    seller_review_score = st.number_input('Satıcı Değerlendirme Puanı', min_value=0, max_value=5, step=1)
+    seller_review_score = st.number_input('Satıcı Değerlendirme Puanı', min_value=0, max_value=10, step=1)
     distance_km = st.slider('Mesafe', min_value=1, max_value=8736, value=1)
     customer_wait_day = (order_delivered_timestamp - order_purchase_timestamp).total_seconds() / 86400
     payment_value = ((price + freight_value) * quantity) - discount
@@ -109,4 +107,8 @@ with tab3:
                                                payment_type[1], *customer_wait_day, *category)
 
         # Display the predicted review score
+        if predicted_score == 0:
+            predicted_score = "Unsatisfied"
+        else:
+            predicted_score = "Satisfied"
         st.write('Tahmin Edilen Review Score:', predicted_score)
