@@ -41,7 +41,7 @@ with (tab1):
         weekday = [0, 0, 0, 0, 0, 1]
     else:
         weekday = [0, 0, 0, 0, 0, 0]
-    special_day = ["Carnival", "Children", "Christmas", "New Year", "Valentine's Day", "Normal", "Black Friday"]
+    special_day = ["Normal", "Carnival", "Children", "Christmas", "New Year", "Valentine's Day", "Black Friday"]
     special_days = st.selectbox("Özel Günler", special_day)
     if special_day == "Carnival":
         special_day = [1, 0, 0, 0, 0, 0]
@@ -114,9 +114,20 @@ with (tab2):
     prepare_time = st.number_input("Ürünün Hazırlanma Süresi" , step=1)
 
 with (tab3):
-    product_weight_g = st.number_input("Ürün Ağırlığı")
+    product_weight_g = st.number_input("Ürün Ağırlığı", min_value=1)
     product_cm3 = st.number_input("Ürün cm3'ü")
-    cargo_score = st.number_input("Kargo Skoru" , step=1)
+    cargo_score = st.selectbox("Kargo Şirketi", ["A Sınıfı", "B Sınıfı", "C Sınıfı", "D Sınıfı", "E Sınıfı"])
+    if cargo_score == "E Sınıfı":
+        cargo_score = 25
+    elif cargo_score == "D Sınıfı":
+        cargo_score = 60
+    elif cargo_score == "C Sınıfı":
+        cargo_score = 100
+    elif cargo_score == "B Sınıfı":
+        cargo_score = 220
+    else:
+        cargo_score = 500
+
     distance_km = st.slider('Mesafe', min_value=1, max_value=8736, value=1)
     season = ""
     if month < 3:
@@ -160,7 +171,7 @@ with (tab3):
                                                quantity, year, product_cm3, month, prepare_time, cargo_score, *season,
                                                *special_day, *weekday, *state, *c_state )
 
-        st.write('Tahmin Edilen Delivery Time:', predicted_score)
+        st.write('Tahmin Edilen Delivery Time:',time + timedelta(int(predicted_score)))
 
 
 
