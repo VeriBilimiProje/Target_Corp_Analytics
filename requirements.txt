@@ -10,3 +10,4 @@ xgboost~=2.0.3
 catboost~=1.2.5
 joblib==1.2.0
 st_pages
+streamlit_extras

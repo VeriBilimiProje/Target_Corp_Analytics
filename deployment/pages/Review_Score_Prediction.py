@@ -5,6 +5,7 @@ import joblib  # Add joblib library
 from datetime import datetime, timedelta
 import os
 import logging
+from streamlit_extras.let_it_rain import rain
 
 # Load the model
 model = joblib.load("deployment/review_model.pkl")
