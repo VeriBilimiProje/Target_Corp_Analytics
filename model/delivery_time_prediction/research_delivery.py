@@ -116,8 +116,8 @@ def data_prep(df):
 
     df_final.dropna(inplace=True)
 
-    for i in num_cols:
-        df_final[i] = np.log(df_final[i])
+    # for i in num_cols:
+    #     df_final[i] = np.log(df_final[i])
 
     df_final = en.one_hot_encoder(df_final, ['season', 'special_day', 'purchase_weekday', 'seller_state',
                                              'customer_state'], drop_first=True)
@@ -126,9 +126,9 @@ def data_prep(df):
 
     df_final['delivery_time'].std()
 
-    rs = RobustScaler()
-    l = [col for col in df_final.columns if col not in ['delivery_time']]
-    df_final[l] = rs.fit_transform(df_final[l])
+    # rs = RobustScaler()
+    # l = [col for col in df_final.columns if col not in ['delivery_time']]
+    # df_final[l] = rs.fit_transform(df_final[l])
 
     y = df_final['delivery_time']
 
