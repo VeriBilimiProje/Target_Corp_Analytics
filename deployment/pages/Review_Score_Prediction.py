@@ -10,6 +10,21 @@ import logging
 model = joblib.load("deployment/review_model.pkl")
 
 # Sayfa başlığı
+col1, col2, col3 = st.columns(3)
+
+# İlk metrik
+with col1:
+    container1 = st.container(border=True)
+    rmse = container1.metric(label="Accuracy" , value="0.881", delta="0.04")
+
+# İkinci metrik
+with col2:
+    container2 = st.container(border=True)
+    r2 = container2.metric(label="F1 Score" , value="0.933", delta="0.02")
+
+with col3:
+    container3 = st.container(border=True)
+    r2 = container3.metric(label="Roc Auc" , value="0.794", delta="0.228")
 st.title('Review Score Prediction')
 
 # Ana sayfada gösterilecek sekmeler

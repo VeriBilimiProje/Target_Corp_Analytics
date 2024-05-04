@@ -11,11 +11,31 @@ from catboost import CatBoostRegressor
 model = joblib.load('deployment/logistic_model.pkl')
 
 # Sayfa başlığı
+col1, col2, col3, col4= st.columns(4)
+
+# İlk metrik
+with col1:
+    container1 = st.container(border=True)
+    rmse = container1.metric(label="RMSE" , value="1.176", delta="-7.473")
+
+# İkinci metrik
+with col2:
+    container2 = st.container(border=True)
+    r2 = container2.metric(label="R2 Score" , value="0.983", delta="0.818")
+
+with col3:
+    container3 = st.container(border=True)
+    r2 = container3.metric(label="Mean" , value="12.30", delta="-", delta_color="off")
+
+with col4:
+    container4 = st.container(border=True)
+    r2 = container4.metric(label="STD" , value="9.44", delta="-", delta_color="off")
+
+
 st.title('Delivery Time Prediction')
 
 # Ana sayfada gösterilecek sekmeler
-tab1, tab2, tab3 = st.tabs(["Tab1", "Tab2", "Tab3"])
-
+tab1, tab2, tab3 = st.tabs(["Ürün & Tarih", "Müşteri & Satıcı", "Kargo"])
 
 with (tab1):
     payment_value = st.number_input("Toplam Fiyat")
@@ -86,7 +106,7 @@ with (tab2):
         c_state = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
     else:
         c_state = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    cities_status = st.radio("Şehir Statü", ["Big", "Major", "Medium", "Small"])
+    cities_status = st.radio("Müşteri Şehir Statüsü", ["Big", "Major", "Medium", "Small"])
     if cities_status == "Big":
         cities_status = 0
     elif cities_status == "Major":
@@ -95,7 +115,7 @@ with (tab2):
         cities_status = 2
     else:
         cities_status = 3
-    state = ["PR", "RJ", "RS", "SC", "RP", "SP", "Other"]
+    state = st.selectbox( "Satıcı Eyaleti", ["PR", "RJ", "RS", "SC", "RP", "SP", "Other"])
     seller_state = ("Satıcı Eyaleti", state)
     if state == "PR":
         state = [1, 0, 0, 0, 0, 0]
@@ -111,9 +131,9 @@ with (tab2):
         state = [0, 0, 0, 0, 0, 1]
     else:
         state = [0, 0, 0, 0, 0, 0]
-    prepare_time = st.number_input("Ürünün Hazırlanma Süresi" , step=1)
 
 with (tab3):
+    prepare_time = st.number_input("Ürünün Hazırlanma Süresi" , step=1)
     product_weight_g = st.number_input("Ürün Ağırlığı", min_value=1)
     product_cm3 = st.number_input("Ürün cm3'ü")
     cargo_score = st.selectbox("Kargo Şirketi", ["A Sınıfı", "B Sınıfı", "C Sınıfı", "D Sınıfı", "E Sınıfı"])
@@ -128,7 +148,7 @@ with (tab3):
     else:
         cargo_score = 500
 
-    distance_km = st.slider('Mesafe', min_value=1, max_value=8736, value=1)
+    distance_km = st.slider('Mesafe', min_value=10, max_value=8736,)
     season = ""
     if month < 3:
         season = "q1"
@@ -166,12 +186,17 @@ with (tab3):
         return prediction
 
     if st.button('Tahmin Et'):
+        st.balloons()
         # Call the prediction function with input features
         predicted_score = predict_delivery_time(product_weight_g, payment_value, distance_km, cities_status,
                                                quantity, year, product_cm3, month, prepare_time, cargo_score, *season,
-                                               *special_day, *weekday, *state, *c_state )
+                                               *special_day, *weekday, *state, *c_state)
 
-        st.write('Tahmin Edilen Delivery Time:',time + timedelta(int(predicted_score)))
-
-
+    try:
+        if int(predicted_score) < 2:
+            st.success("🚚 Kargonuz 48 Saat İçerisinde Teslim Edilecektir.")
+        else:
+            st.success(f'🚚 Tahmin Edilen Delivery Time: {time + timedelta(int(predicted_score))}')
+    except:
+        st.write("")
 
