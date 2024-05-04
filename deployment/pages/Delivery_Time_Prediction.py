@@ -39,7 +39,7 @@ tab1, tab2, tab3 = st.tabs(["Ürün & Tarih", "Müşteri & Satıcı", "Kargo"])
 
 with (tab1):
     payment_value = st.number_input("Toplam Fiyat")
-    quantity = st.number_input("Adet")
+    quantity = st.number_input("Adet", min_value=1 , max_value=5)
     time_box= datetime(2017, 1, 1)
     time = st.date_input("Satın Alınan Tarih", time_box)
     year = time.year

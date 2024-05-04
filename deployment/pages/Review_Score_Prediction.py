@@ -5,6 +5,7 @@ import joblib  # Add joblib library
 from datetime import datetime, timedelta
 import os
 import logging
+from streamlit_extras.let_it_rain import rain
 
 # Load the model
 model = joblib.load("deployment/review_model.pkl")
@@ -34,7 +35,7 @@ with tab1:
     price = st.number_input('Ürün Fiyatı', min_value=0.0)
     freight_value = st.number_input('Kargo Ücreti', min_value=0.0)
     discount = st.number_input('İndirim Oranı', min_value=0.0)
-    quantity = st.number_input('Ürün Adedi', min_value=0.0)
+    quantity = st.number_input('Ürün Adedi', min_value=1 , max_value=5)
 
     # İleri butonu (Tab2'yi açar) - Unique key added
     if st.button('→ İleri', key='forward_tab1'):
@@ -121,9 +122,19 @@ with tab3:
                                                seller_review_score, delay_time, distance_km, discount, payment_type[0],
                                                payment_type[1], *customer_wait_day, *category)
 
-        # Display the predicted review score
-        if predicted_score == 0:
-            predicted_score = "Unsatisfied"
+
+    def example():
+        rain(
+            emoji="😡",
+            font_size=100,
+            falling_speed=3,
+            animation_length="1")
+    try:
+        if int(predicted_score) == 0:
+            st.error("😡 Unsatisfied")
+            example()
         else:
-            predicted_score = "Satisfied"
-        st.write('Tahmin Edilen Review Score:', predicted_score)
+            st.balloons()
+            st.success("🤩 Satisfied")
+    except:
+        st.write("")
