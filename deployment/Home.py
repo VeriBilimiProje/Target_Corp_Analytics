@@ -33,31 +33,50 @@ background-size: cover;
 '''
 st.markdown(page_bg, unsafe_allow_html=True)
 
-# Orta noktaya esneklik ekleyerek kutuyu düzenle
+# st.image("deployment/assets/olist.png", width=200, use_column_width="never")
+
 st.markdown(
     """
-    <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-        <div style="background-color: rgba(255, 255, 255, 0.5); padding: 20px; border-radius: 10px; max-width: 50%;">
-            <h1 style="color: #000000; text-align: center;">E-Commerce Prediction</h1>
-            <p style="color: #000000; text-align: center;"> Bu proje, Olist Store'da yapılan siparişlerin Brezilya e-ticaret genel veri kümesidir. Veri kümesi, 2016'dan 2018'e kadar Brezilya'daki birden fazla pazar yerinde yapılan 100 bin siparişin bilgisine sahiptir.
-## 🎢Müşteri Memnuniyeti Modelleme:  
-
-Projemizde müşteri memnuniyetine etki eden faktörleri belirleyip memnuniyet tahmini modelini geliştirdik.
-## 🎢Modelleme Yöntemleri:  
-
-Regresyon analizi: Regresyon analizi, bağımlı bir değişken (örneğin, müşteri memnuniyeti puanı) ile bir veya birden fazla bağımsız değişken (örneğin, ürün fiyatı, teslimat süresi) arasındaki ilişkiyi modellemek için kullanılır.  
-## 📑Modelleme Değerlendirme:  
-
-Ortalama mutlak hata (MAE): MAE, tahmin edilen değerler ile gerçek değerler arasındaki ortalama mutlak farkı ölçer.  
-Ortalama karesel hata (MSE): MSE, tahmin edilen değerler ile gerçek değerler arasındaki ortalama karesel farkı ölçer.  
-# 🔍Sonuç:  
-
-Olist veri seti, müşteri memnuniyeti modelleme için değerli bir kaynaktır. Bu veri seti, siparişler, ürünler, müşteriler ve değerlendirmeler gibi çeşitli bilgileri içerir. Bu bilgiler, müşteri memnuniyetini etkileyen faktörleri belirlemek ve tahmin modelleri oluşturmak için kullanılabilir.</p>
-        </div>
+    <div style="display: flex; justify-content: center;">
+        <img src="https://i.hizliresim.com/c3v6sx3.png" alt="Olist Logo" width="200"/>
     </div>
     """,
     unsafe_allow_html=True
 )
+
+st.markdown(
+    """
+
+## Project Overview:
+- The "Data Sapiens" dashboard showcases insights derived from a publicly available dataset of e-commerce orders from Olist, comprising 100,000 orders between 2016 and 2018.
+- Leveraging machine learning models, namely Catboost and Logistic Regression, it provides valuable information about various aspects of the customer journey, including order status, checkout, and customer reviews.
+- The dataset encompasses details about sellers listing products on Olist, along with customer behavior and demographic data.
+
+---
+
+### Models Utilized:
+1. **Review Score Prediction:**
+   - Model: Logistic Regression
+   - Description: Predicts customer review scores based on various factors.
+   
+2. **Delivery Time Prediction:**
+   - Model: Catboost
+   - Description: Predicts delivery times for orders placed on Olist.
+
+---
+
+### Model Evaluation:
+- **Review Score Prediction:**
+  - Evaluation Metrics: Accuracy, ROC Auc , F1 Score
+  - Performance: Achieved an accuracy of 0.881%, ROC Auc score of 0.794 and F1 score of 0.933%.
+  
+- **Delivery Time Prediction:**
+  - Evaluation Metrics: RMSE, R2 Score
+  - Performance: Achieved an RMSE of 1.176 and an R2 score of 0.983.
+
+---
+""", unsafe_allow_html=True)
+
 html_sticky_footer = """
 <style>
     body {
@@ -102,4 +121,3 @@ html_sticky_footer = """
 
 # Display the custom sticky footer
 st.markdown(html_sticky_footer, unsafe_allow_html=True)
-
