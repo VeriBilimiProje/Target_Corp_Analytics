@@ -12,6 +12,7 @@ st.set_page_config(
     page_title="data sapiens",
     page_icon="🧊",
     layout="wide",
+    primaryColor="#8ab7e2",
     initial_sidebar_state="expanded",
     menu_items={
         'get help': 'https://www.extremelycoolapp.com/help',
@@ -19,8 +20,6 @@ st.set_page_config(
         'about': "# this is a header. this is an *extremely* cool app!"
     }
 )
-
-st.sidebar.image("deployment/assets/datasapienslogo.png", use_column_width=True)
 
 # st.title('DATA SAPIENS')
 page_bg = '''
