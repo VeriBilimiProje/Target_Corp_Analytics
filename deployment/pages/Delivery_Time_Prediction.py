@@ -35,13 +35,13 @@ with col4:
 st.title('Delivery Time Prediction')
 
 # Ana sayfada gösterilecek sekmeler
-tab1, tab2, tab3 = st.tabs(["Ürün & Tarih", "Müşteri & Satıcı", "Kargo"])
+tab1, tab2, tab3 = st.tabs(["Product & Date", "Customer & Seller", "Cargo"])
 
 with (tab1):
-    payment_value = st.number_input("Toplam Fiyat")
-    quantity = st.number_input("Adet", min_value=1 , max_value=5)
+    payment_value = st.number_input("Total Price")
+    quantity = st.number_input("Quantity", min_value=1 , max_value=5)
     time_box= datetime(2017, 1, 1)
-    time = st.date_input("Satın Alınan Tarih", time_box)
+    time = st.date_input("Date Purchased", time_box)
     year = time.year
     month = time.month
     days = time.weekday()
@@ -62,7 +62,7 @@ with (tab1):
     else:
         weekday = [0, 0, 0, 0, 0, 0]
     special_day = ["Normal", "Carnival", "Children", "Christmas", "New Year", "Valentine's Day", "Black Friday"]
-    special_days = st.selectbox("Özel Günler", special_day)
+    special_days = st.selectbox("Special Days", special_day)
     if special_day == "Carnival":
         special_day = [1, 0, 0, 0, 0, 0]
     elif special_day == "Children":
@@ -79,7 +79,7 @@ with (tab1):
         special_day = [0, 0, 0, 0, 0, 0]
 with (tab2):
     c_state = ["CE" , "DF" , "ES" , "GO" , "MG" , "PE" , "PR" ,"RJ" , "RS" , "SC" , "SP", "BA" "Other"]
-    customer_state = st.selectbox("Müşteri Eyaleti" , c_state)
+    customer_state = st.selectbox("Customer State" , c_state)
     if c_state == "CE":
         c_state = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     elif c_state == "DF":
@@ -106,7 +106,7 @@ with (tab2):
         c_state = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
     else:
         c_state = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    cities_status = st.radio("Müşteri Şehir Statüsü", ["Big", "Major", "Medium", "Small"])
+    cities_status = st.radio("Customer City Status", ["Big", "Major", "Medium", "Small"])
     if cities_status == "Big":
         cities_status = 0
     elif cities_status == "Major":
@@ -115,8 +115,8 @@ with (tab2):
         cities_status = 2
     else:
         cities_status = 3
-    state = st.selectbox( "Satıcı Eyaleti", ["PR", "RJ", "RS", "SC", "RP", "SP", "Other"])
-    seller_state = ("Satıcı Eyaleti", state)
+    state = st.selectbox( "Seller State", ["PR", "RJ", "RS", "SC", "RP", "SP", "Other"])
+    seller_state = ("Seller State", state)
     if state == "PR":
         state = [1, 0, 0, 0, 0, 0]
     elif state == "RJ":
@@ -133,22 +133,22 @@ with (tab2):
         state = [0, 0, 0, 0, 0, 0]
 
 with (tab3):
-    prepare_time = st.number_input("Ürünün Hazırlanma Süresi" , step=1)
-    product_weight_g = st.number_input("Ürün Ağırlığı", min_value=1)
-    product_cm3 = st.number_input("Ürün cm3'ü")
-    cargo_score = st.selectbox("Kargo Şirketi", ["A Sınıfı", "B Sınıfı", "C Sınıfı", "D Sınıfı", "E Sınıfı"])
-    if cargo_score == "E Sınıfı":
+    prepare_time = st.number_input("Product Preparation Time" , step=1)
+    product_weight_g = st.number_input("Product Weight", min_value=1)
+    product_cm3 = st.number_input("Product cm3")
+    cargo_score = st.selectbox("Shipping Company", ["A Class", "B Class", "C Class", "D Class", "E Class"])
+    if cargo_score == "E Class":
         cargo_score = 25
-    elif cargo_score == "D Sınıfı":
+    elif cargo_score == "D Class":
         cargo_score = 60
-    elif cargo_score == "C Sınıfı":
+    elif cargo_score == "C Class":
         cargo_score = 100
-    elif cargo_score == "B Sınıfı":
+    elif cargo_score == "B Class":
         cargo_score = 220
     else:
         cargo_score = 500
 
-    distance_km = st.slider('Mesafe', min_value=10, max_value=8736,)
+    distance_km = st.slider('Distance', min_value=10, max_value=8736,)
     season = ""
     if month < 3:
         season = "q1"
@@ -185,8 +185,8 @@ with (tab3):
         # Return the predicted review score
         return prediction
 
-    if st.button('Tahmin Et'):
-        st.balloons()
+    if st.button('Predict'):
+#        st.balloons()
         # Call the prediction function with input features
         predicted_score = predict_delivery_time(product_weight_g, payment_value, distance_km, cities_status,
                                                quantity, year, product_cm3, month, prepare_time, cargo_score, *season,
@@ -194,9 +194,9 @@ with (tab3):
 
     try:
         if int(predicted_score) < 2:
-            st.success("🚚 Kargonuz 48 Saat İçerisinde Teslim Edilecektir.")
+            st.success("🚚 Your cargo will be delivered within 48 hours.")
         else:
-            st.success(f'🚚 Tahmin Edilen Delivery Time: {time + timedelta(int(predicted_score))}')
+            st.success(f'🚚 Estimated Delivery Time: {time + timedelta(int(predicted_score))}')
     except:
         st.write("")
 

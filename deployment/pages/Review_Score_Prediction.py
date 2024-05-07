@@ -29,27 +29,24 @@ with col3:
 st.title('Review Score Prediction')
 
 # Ana sayfada gösterilecek sekmeler
-tab1, tab2, tab3 = st.tabs(["Ücretler", "Ödeme Yöntemi ve Kategori", "Süreç"])
+tab1, tab2, tab3 = st.tabs(["Fees & Quantity", "Payment Method & Seller Type", "Process"])
 
 with tab1:
-    price = st.number_input('Ürün Fiyatı', min_value=0.0)
-    freight_value = st.number_input('Kargo Ücreti', min_value=0.0)
-    discount = st.number_input('İndirim Oranı', min_value=0.0)
-    quantity = st.number_input('Ürün Adedi', min_value=1 , max_value=5)
+    price = st.number_input('Product Price', min_value=0.0)
+    freight_value = st.number_input('Shipping Cost', min_value=0.0)
+    discount = st.number_input('discount Rate', min_value=0.0)
+    quantity = st.number_input('Quantity', min_value=1 , max_value=5)
 
-    # İleri butonu (Tab2'yi açar) - Unique key added
-    if st.button('→ İleri', key='forward_tab1'):
-        st.session_state.current_tab = "Ödeme Yöntemi ve Kategori"
 
 with tab2:
-    payment_type = st.radio("Ödeme Yöntemi", ["Debit Card", "Credit Card", "Coupon"])
-    payment_installments = st.slider('Ödeme Taksit Sayısı', min_value=1, max_value=24, value=1)
-    categories = ['Onaylanmış Satıcı', 'Başarılı Satıcı', 'Onaylanmamış Satıcı']
-    category = st.selectbox('Satıcı Tipi', categories)
+    payment_type = st.radio("Payment method", ["Debit Card", "Credit Card", "Coupon"])
+    payment_installments = st.slider('Installments', min_value=1, max_value=24, value=1)
+    categories = ['Verified Seller', 'Successful Seller', 'Onaylanmamış Satıcı']
+    category = st.selectbox('Seller Type', categories)
 
-    if category == "Onaylanmış Satıcı":
+    if category == "Verified Seller":
         category = [1, 0]
-    elif category == "Başarılı Satıcı":
+    elif category == "Successful Seller":
         category = [0, 1]
     else:
         category = [0, 0]
@@ -61,30 +58,26 @@ with tab2:
     else:
         payment_type = [0, 0]
 
-    # İleri butonu (Tab3'ü açar) - Unique key added
-    if st.button('→ İleri', key='forward_tab2'):
-        st.session_state.current_tab = "Süreç"
-
 with tab3:
     default_purchase_date = datetime(2017, 1, 1)
-    order_purchase_timestamp = st.date_input('Satın Alınan Tarih', value=default_purchase_date)
+    order_purchase_timestamp = st.date_input('Date Purchased', value=default_purchase_date)
 
     # order_delivered_carrier_date için varsayılan başlangıç tarihi (order_purchase_timestamp'tan bir gün sonrası)
     if order_purchase_timestamp:
         default_carrier_date = order_purchase_timestamp + timedelta(days=1)
     else:
         default_carrier_date = default_purchase_date + timedelta(days=1)
-    order_delivered_estimated_date = st.date_input('Ulaşması Gereken Tarih', value=default_carrier_date)
+    order_delivered_estimated_date = st.date_input('Product Due Date', value=default_carrier_date)
 
     # order_delivered_timestamp için varsayılan başlangıç tarihi (order_delivered_carrier_date'ten bir gün sonrası)
     if order_delivered_estimated_date:
         default_delivery_date = order_delivered_estimated_date + timedelta(days=1)
     else:
         default_delivery_date = default_purchase_date + timedelta(days=1)
-    order_delivered_timestamp = st.date_input('Müşteriye Ulaşan Tarih', value=default_delivery_date)
+    order_delivered_timestamp = st.date_input('Product Delivery Date', value=default_delivery_date)
 
-    seller_review_score = st.number_input('Satıcı Değerlendirme Puanı', min_value=0, max_value=10, step=1)
-    distance_km = st.slider('Mesafe', min_value=1, max_value=8736, value=1)
+    seller_review_score = st.number_input('Seller Rating Score', min_value=0, max_value=10, step=1)
+    distance_km = st.slider('Distance', min_value=1, max_value=8736, value=1)
     customer_wait_day = (order_delivered_timestamp - order_purchase_timestamp).total_seconds() / 86400
     payment_value = ((price + freight_value) * quantity) - discount
     delay_time = (order_delivered_estimated_date - order_delivered_timestamp).total_seconds() / 86400
@@ -116,7 +109,7 @@ with tab3:
 
 
     # Predict the review score
-    if st.button('Tahmin Et'):
+    if st.button('Predict'):
         # Call the prediction function with input features
         predicted_score = predict_review_score(price, freight_value, payment_installments, payment_value,
                                                seller_review_score, delay_time, distance_km, discount, payment_type[0],
