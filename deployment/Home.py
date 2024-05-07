@@ -76,7 +76,7 @@ html_sticky_footer = """
     }
     footer {
         padding: 20px;
-        background-color: rgba(47, 69, 206, 0.3);
+        background-color: #f2f2f2);
         width: 100%;
         position: fixed;
         bottom: 0;
