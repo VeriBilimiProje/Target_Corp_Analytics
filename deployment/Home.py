@@ -6,13 +6,14 @@ import seaborn as sns
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
-
+# with open("deployment/style.css", "r", encoding="utf-8") as pred:
+    # footer_html = f"""{pred.read()}"""
+    # st.markdown(footer_html, unsafe_allow_html=True)
 
 st.set_page_config(
     page_title="data sapiens",
     page_icon="🧊",
     layout="wide",
-    primaryColor="#8ab7e2",
     initial_sidebar_state="expanded",
     menu_items={
         'get help': 'https://www.extremelycoolapp.com/help',
@@ -20,17 +21,6 @@ st.set_page_config(
         'about': "# this is a header. this is an *extremely* cool app!"
     }
 )
-
-# st.title('DATA SAPIENS')
-page_bg = '''
-<style>
-body {
-background-image: url("https://example.com/background.jpg");
-background-size: cover;
-}
-</style>
-'''
-st.markdown(page_bg, unsafe_allow_html=True)
 
 # st.image("deployment/assets/olist.png", width=200, use_column_width="never")
 
@@ -86,7 +76,7 @@ html_sticky_footer = """
     }
     footer {
         padding: 20px;
-        background-color: #f2f2f2;
+        background-color: rgba(47, 69, 206, 0.3);
         width: 100%;
         position: fixed;
         bottom: 0;

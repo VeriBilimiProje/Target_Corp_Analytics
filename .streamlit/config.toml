@@ -1,0 +1,10 @@
+[global]
+[client]
+showErrorDetails = false
+
+[theme]
+primaryColor="#5569da"
+backgroundColor="#b6bfef"
+secondaryBackgroundColor="#8592e2"
+textColor="#000000"
+font="sans serif"

@@ -1,7 +1,0 @@
-[client]
-showErrorDetails = false
-
-[theme]
-base="light"
-primaryColor="#8ab7e2"
-textColor = "#6e7074"
