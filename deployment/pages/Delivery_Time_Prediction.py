@@ -78,7 +78,7 @@ with (tab1):
     else:
         special_day = [0, 0, 0, 0, 0, 0]
 with (tab2):
-    c_state = ["CE" , "DF" , "ES" , "GO" , "MG" , "PE" , "PR" ,"RJ" , "RS" , "SC" , "SP", "BA" "Other"]
+    c_state = ["CE" , "DF" , "ES" , "GO" , "MG" , "PE" , "PR" ,"RJ" , "RS" , "SC" , "SP", "BA", "Other"]
     customer_state = st.selectbox("Customer State" , c_state)
     if c_state == "CE":
         c_state = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
