@@ -34,14 +34,14 @@ tab1, tab2, tab3 = st.tabs(["Fees & Quantity", "Payment Method & Seller Type", "
 with tab1:
     price = st.number_input('Product Price', min_value=0.0)
     freight_value = st.number_input('Shipping Cost', min_value=0.0)
-    discount = st.number_input('discount Rate', min_value=0.0)
+    discount = st.number_input('Discount Rate', min_value=0.0)
     quantity = st.number_input('Quantity', min_value=1 , max_value=5)
 
 
 with tab2:
     payment_type = st.radio("Payment method", ["Debit Card", "Credit Card", "Coupon"])
     payment_installments = st.slider('Installments', min_value=1, max_value=24, value=1)
-    categories = ['Verified Seller', 'Successful Seller', 'Onaylanmamış Satıcı']
+    categories = ['Verified Seller', 'Successful Seller', 'Unverified Seller']
     category = st.selectbox('Seller Type', categories)
 
     if category == "Verified Seller":
