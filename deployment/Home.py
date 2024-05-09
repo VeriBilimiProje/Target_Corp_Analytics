@@ -22,6 +22,7 @@ st.set_page_config(
     }
 )
 
+st.sidebar.image("deployment/assets/datasapienslogo.png")
 # st.image("deployment/assets/olist.png", width=200, use_column_width="never")
 
 st.markdown(
