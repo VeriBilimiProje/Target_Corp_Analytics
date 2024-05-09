@@ -176,3 +176,5 @@ html_sticky_footer = """
 
 # Display the custom sticky footer
 st.markdown(html_sticky_footer, unsafe_allow_html=True)
+
+st.sidebar.image("deployment/assets/datasapienslogo.png")
