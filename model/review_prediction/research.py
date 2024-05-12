@@ -18,6 +18,9 @@ pd.set_option('display.width', 5000)
 
 
 def data_prep(df):
+    ########################################################################
+    # FEATURE ENGINEERRING
+    ########################################################################
     list_of_date_columns = ['order_purchase_timestamp', 'order_approved_at', 'order_delivered_carrier_date',
                             'order_delivered_customer_date', 'order_estimated_delivery_date',
                             'review_creation_date', 'review_answer_timestamp', 'shipping_limit_date',
@@ -33,6 +36,10 @@ def data_prep(df):
     result = out.grab_col_names(df)
     cat_cols, num_cols = result[0], result[1]
 
+    ########################################################################
+    # FEATURE EXTRACTION
+    ########################################################################
+
     out.replace_all_outliers(df, num_cols)
 
     seller = df.seller_id.value_counts().to_dict()
@@ -43,12 +50,7 @@ def data_prep(df):
 
     df['seller_popularity'] = pd.cut(df['seller_popularity'], bins=[0, 300, 1000, np.inf], labels=['C', 'B', 'A'])
 
-    df['estimated_days'] = (df['order_estimated_delivery_date'] - df['order_purchase_timestamp']).dt.days
-    df['ships_in'] = (df['shipping_limit_date'] - df['order_purchase_timestamp']).dt.days
-
     df['shipping_days'] = (df['order_delivered_customer_date'] - df['order_delivered_carrier_date']).dt.days
-
-    df['answer_diff'] = (df['review_answer_timestamp'] - df['review_creation_date']).dt.total_seconds() / 86400
 
     df['customer_wait_day'] = (df['order_delivered_customer_date'] - df[
         'order_purchase_timestamp']).dt.total_seconds() / 86400
@@ -77,11 +79,9 @@ def data_prep(df):
     df['customer_wait_day'] = pd.cut(df['customer_wait_day'], bins=[0, 8, 16, 25, 40, 61],
                                      labels=['Very_Fast', 'Fast', 'Neutral', 'Slow', 'Worst'])
 
-    df['estimated_days'] = pd.cut(df['estimated_days'], bins=[0, 8, 16, 25, 40, 61],
-                                  labels=['Very_Fast', 'Fast', 'Neutral', 'Slow', 'Worst'])
-
-    df['ships_in'] = pd.cut(df['ships_in'], bins=[0, 4, 8, 16, 28, 61],
-                            labels=['Very_Fast', 'Fast', 'Neutral', 'Slow', 'Worst'])
+    ########################################################################
+    # INCONSISTENT VALUES
+    ########################################################################
 
     df.drop_duplicates(subset=['order_id'], keep='first', inplace=True)
 
@@ -105,6 +105,10 @@ def data_prep(df):
 
     df.drop(df[df['review_score'] == 3].index, inplace=True)
 
+    ########################################################################
+    # RARE ENCODING
+    ########################################################################
+
     df[['payment_type']] = en.rare_encoder(df[['payment_type']], 0.06)
     df[['product category']] = en.rare_encoder(df[['product category']], 0.02)
 
@@ -116,34 +120,59 @@ def data_prep(df):
 
     df['review_score'] = df['review_score'].map(encoded_class)
 
+    ########################################################################
+    # FINAL DATASET
+    ########################################################################
     df_final = df[
         ['review_score', 'price', 'freight_value', 'payment_type', 'payment_installments', 'payment_value',
          'customer_wait_day', 'seller_review_score', 'delay_time', 'distance_km', 'seller_popularity', 'discount'
          ]]
 
+    ########################################################################
+    # LOGARITHMIC CONVERSION
+    ########################################################################
     df_final['price'] = np.log(df_final['price'])
     df_final['payment_value'] = np.log(df_final['payment_value'])
     df_final['seller_review_score'] = np.log(df_final['seller_review_score'])
     df_final['distance_km'] = np.log(df_final['distance_km'])
 
+    ########################################################################
+    # MISSING VALUES
+    ########################################################################
     df_final['delay_time'].fillna(-14, inplace=True)
     df_final['distance_km'].fillna(428, inplace=True)
     df_final['customer_wait_day'].fillna('Worst', inplace=True)
     df_final.dropna(inplace=True)
 
+    ########################################################################
+    # ENCODING
+    ########################################################################
+
     df_final = en.one_hot_encoder(df_final, ['payment_type', 'customer_wait_day', 'seller_popularity'], drop_first=True)
 
     df_final = en.label_encoder(df_final, 'review_score')
 
+    ########################################################################
+    # FEATURE SCALING
+    ########################################################################
+
     rs = RobustScaler()
     l = [col for col in df_final.columns if col not in ['review_score']]
     df_final[l] = rs.fit_transform(df_final[l])
+
+    ########################################################################
+    # MODELING
+    ########################################################################
 
     y = df_final['review_score']
     X = df_final.drop(columns=['review_score'], axis=1)
 
     return X, y
 
+
+########################################################################
+# BASE MODEL
+########################################################################
 
 def base_models(X, y):
     print("Base Models....")
@@ -170,7 +199,7 @@ def base_models(X, y):
 
 
 ######################################################
-# 4. Automated Hyperparameter Optimization
+# Automated Hyperparameter Optimization
 ######################################################
 
 knn_params = {"n_neighbors": range(2, 50)}
