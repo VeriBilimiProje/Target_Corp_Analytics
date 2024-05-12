@@ -4,7 +4,8 @@ import pandas as pd
 from sklearn.model_selection import cross_val_score
 import joblib
 from catboost import CatBoostRegressor
-
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 pd.set_option('display.max_column', None)
 pd.set_option('display.width', 5000)
@@ -14,6 +15,22 @@ df = pd.read_csv('datasets/dataset.csv')
 X, y = re.data_prep(df)
 
 catb_reg = CatBoostRegressor(verbose=False).fit(X, y)
+
+
+def plot_importance(model, features, num=len(X), save=False):
+    feature_imp = pd.DataFrame({'Value': model.feature_importances_, 'Feature': features.columns})
+    plt.figure(figsize=(10, 10))
+    sns.set(font_scale=1)
+    sns.barplot(x="Value", y="Feature", data=feature_imp.sort_values(by="Value",
+                                                                     ascending=False)[0:num])
+    plt.title('Features')
+    plt.tight_layout()
+    plt.show()
+    if save:
+        plt.savefig('importances.png')
+
+
+plot_importance(catb_reg, X)
 
 re.base_models(X, y)
 
@@ -39,6 +56,6 @@ joblib.dump(catb_reg, "deployment/logistic_model.pkl")
 # CART      2.207109  0.941249
 # RF        1.533162  0.973467
 # GBM       1.732820  0.966031
-# XGBoost   1.488365  0.974814 || 1.316642  0.980264
-# LightGBM  1.396390  0.977901 || 1.344612  0.979495
+# XGBoost   1.316642  0.980264
+# LightGBM  1.344612  0.979495
 # CatBoost  1.176823  0.983966

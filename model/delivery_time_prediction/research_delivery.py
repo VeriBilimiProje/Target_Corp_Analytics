@@ -16,7 +16,13 @@ from lightgbm import LGBMRegressor
 pd.set_option('display.max_column', None)
 pd.set_option('display.width', 5000)
 
+df = pd.read_csv('datasets/dataset.csv')
+
+
 def data_prep(df):
+    ########################################################################
+    # FEATURE ENGINEERRING
+    ########################################################################
     list_of_date_columns = ['order_purchase_timestamp', 'order_approved_at', 'order_delivered_carrier_date',
                             'order_delivered_customer_date', 'order_estimated_delivery_date',
                             'review_creation_date', 'review_answer_timestamp', 'shipping_limit_date',
@@ -28,6 +34,10 @@ def data_prep(df):
         except ValueError:
             df['review_creation_date'] = pd.to_datetime(df['review_creation_date'].str[:10], format='%Y-%m-%d')
             print(f'{col} dont')
+
+    ########################################################################
+    # FEATURE EXTRACTION
+    ########################################################################
 
     df['prepare_time'] = (df['order_delivered_carrier_date'] - df['order_purchase_timestamp']).dt.days
 
@@ -70,6 +80,10 @@ def data_prep(df):
         for date in dates:
             df.loc[df['order_purchase_timestamp'].dt.strftime('%m-%d') == date, 'special_day'] = event
 
+    ########################################################################
+    # INCONSISTENT VALUES
+    ########################################################################
+
     df.drop_duplicates(subset=['order_id'], keep='first', inplace=True)
 
     df.drop_duplicates(subset=['review_id'], keep='first', inplace=True)
@@ -92,8 +106,16 @@ def data_prep(df):
 
     df['product_cm3'] = df['product_length_cm'] * df['product_width_cm'] * df['product_height_cm']
 
+    ########################################################################
+    # RARE ENCODING
+    ########################################################################
+
     df[['customer_state', 'seller_state']] = (
         en.rare_encoder(df[['customer_state', 'seller_state']], 0.01))
+
+    ########################################################################
+    # FINAL DATASET
+    ########################################################################
 
     df_final = df[['product_weight_g', 'payment_value', 'distance_km', 'cities_status',
                    'quantity', 'season', 'year', 'product_cm3', 'purchase_weekday', 'special_day', 'month',
@@ -102,6 +124,9 @@ def data_prep(df):
                    'customer_state'
                    ]]
 
+    ########################################################################
+    # MISSING VALUES
+    ########################################################################
     imputer = KNNImputer(n_neighbors=10)
     df_final[['distance_km']] = (imputer.fit_transform(df_final[['distance_km']]))
 
@@ -113,29 +138,43 @@ def data_prep(df):
                 col not in ['delivery_time', 'prepare_time', 'approved_time']]
 
     df_final = out.remove_all_outliers(df_final, num_cols)
-
     df_final.dropna(inplace=True)
 
-    # for i in num_cols:
-    #     df_final[i] = np.log(df_final[i])
+    ########################################################################
+    # LOGARITHMIC CONVERSION
+    ########################################################################
+    for i in num_cols:
+        df_final[i] = np.log(df_final[i])
+
+    ########################################################################
+    # ENCODING
+    ########################################################################
 
     df_final = en.one_hot_encoder(df_final, ['season', 'special_day', 'purchase_weekday', 'seller_state',
                                              'customer_state'], drop_first=True)
 
     df_final = en.label_encoder(df_final, 'cities_status')
 
-    df_final['delivery_time'].std()
+    ########################################################################
+    # FEATURE SCALING
+    ########################################################################
 
-    # rs = RobustScaler()
-    # l = [col for col in df_final.columns if col not in ['delivery_time']]
-    # df_final[l] = rs.fit_transform(df_final[l])
+    rs = RobustScaler()
+    l = [col for col in df_final.columns if col not in ['delivery_time']]
+    df_final[l] = rs.fit_transform(df_final[l])
+
+    ########################################################################
+    # MODELING
+    ########################################################################
 
     y = df_final['delivery_time']
-
     X = df_final.drop(columns=['delivery_time'], axis=1)
     return X, y
 
 
+########################################################################
+# BASE MODEL
+########################################################################
 def base_models(X, y):
     print("Base Models....")
     classifiers = [('LR', LogisticRegression()),
@@ -155,6 +194,10 @@ def base_models(X, y):
         print(f'{name} hesaplandı...')
     print(score.T)
 
+
+######################################################
+# Automated Hyperparameter Optimization
+######################################################
 
 lightgbm_params = {"learning_rate": [0.01, 0.05, 0.1, 0.5],
                    "n_estimators": [100, 300, 500]}
@@ -181,5 +224,3 @@ def hyperparameter_optimization(X, y, cv=3):
         best_models[name] = final_model
     print(score.T)
     return best_models
-
-
