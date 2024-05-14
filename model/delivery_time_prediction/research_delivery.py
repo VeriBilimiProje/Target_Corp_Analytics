@@ -39,6 +39,9 @@ def data_prep(df):
     # FEATURE EXTRACTION
     ########################################################################
 
+    # temel verisetinde distance_km değişkeni yoktu  bu değişkeni geopy.distance kütüphanesi ile bulup verisetine
+    # ekledik
+
     df['prepare_time'] = (df['order_delivered_carrier_date'] - df['order_purchase_timestamp']).dt.days
 
     df['approved_time'] = (df['order_approved_at'] - df['order_purchase_timestamp']).dt.days
