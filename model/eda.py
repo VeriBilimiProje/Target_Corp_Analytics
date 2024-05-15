@@ -37,4 +37,38 @@ sum.correlation_matrix(df, num_cols)
 sum.missing_values_table(df, num_cols)
 
 out.for_check(df, num_cols)
-
+# # 4) Hangi ayda en fazla sipariş verilmektedir?
+# #4.1 bu şekilde ayın numarasını verir
+# #df['order_purchase_timestamp'] = pd.to_datetime(df['order_purchase_timestamp'])
+# #en_fazla_siparis_verilen_ay = df['order_purchase_timestamp'].dt.month.value_counts().idxmax()
+# #print("En fazla sipariş verilen ay:", en_fazla_siparis_verilen_ay)
+# #4.2 ayın ismini istersek
+# #import calendar
+# 
+# # En fazla sipariş verilen ayın numarasını al
+# #en_fazla_siparis_verilen_ay_num = df['order_purchase_timestamp'].dt.month.value_counts().idxmax()
+# 
+# # Ayın adını alın
+# #en_fazla_siparis_verilen_ay_ad = calendar.month_name[en_fazla_siparis_verilen_ay_num]
+# 
+# # Sonuc
+# print("En fazla sipariş verilen ay:", en_fazla_siparis_verilen_ay_ad)
+# #4.3 Grafik ile görmek istersek
+# 
+# # Siparişlerin alındığı ayın çıkarılması
+# df['order_month'] = df['order_purchase_timestamp'].dt.month
+# 
+# # Her ayın sipariş sayısını hesaplanması
+# siparis_aylara_gore = df['order_month'].value_counts().sort_index()
+# 
+# # Çubuk grafiği oluşturma
+# plt.figure(figsize=(10, 6))
+# siparis_aylara_gore.plot(kind='bar', color='skyblue')
+# 
+# # Grafik başlığını ve eksen etiketlerini eklenmesi
+# # plt.title('Hangi Ayda En Fazla Sipariş Verilmektedir?')
+# #plt.xlabel('Ay')
+# #plt.ylabel('Sipariş Sayısı')
+# 
+# # Grafikleri göster
+#  plt.show()
