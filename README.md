@@ -29,12 +29,21 @@ This project aims to predict customer satisfaction and identify the factors that
 Our data set consists of 36 variables and over 100 thousand observations. olist e-commerce websites in Brazil cover the years 2016-2018.
 Some of these variables:
 
--customer_city: City of the customer
+-customer_city: City of the customer                                         
+
 -order_status: Status of the order.
--order_purchase_timestamp: Date and time of the order purchase.
+
+-order_purchase_timestamp: Date and time of the order purchase.   
+
 -order_approved_at: Date and time when the order was approved.
+
 -order_delivered_carrier_date: Date and time when the order was handed to the carrier.
+
 -order_delivered_customer_date: Date and time when the order was delivered to the customer.
+
 -order_estimated_delivery_date: Estimated delivery date of the order.
+
 -review_score: Review score given by the customer.
+
+
 
