@@ -105,6 +105,7 @@ Some of these variables:
 
 ## 👨‍👩‍👧‍👦Team Members 
 
+
 - ### 🙋‍♀️Leyla Alptekin
 
 <a target="_blank" href="https://www.linkedin.com/in/leylaalptekin/"><img src="https://img.shields.io/badge/-LinkedIn-0077B5?style=for-the-badge&logo=Linkedin&logoColor=white"></img></a>
@@ -119,7 +120,8 @@ Some of these variables:
 <a target="_blank" href="https://medium.com/@mr.akar05"><img src="https://img.shields.io/badge/Medium-12100E?style=for-the-badge&logo=medium&logoColor=white"></img></a>
 
 - ### 🙋‍♀️Emine Can
-   <a target="_blank" href=""><img src="https://img.shields.io/badge/-LinkedIn-0077B5?style=for-the-badge&logo=Linkedin&logoColor=white"></img></a>
+
+<a target="_blank" href=""><img src="https://img.shields.io/badge/-LinkedIn-0077B5?style=for-the-badge&logo=Linkedin&logoColor=white"></img></a>
 <a target="_blank" href="https://www.kaggle.com/eminecan"><img src="https://img.shields.io/badge/Kaggle-035a7d?style=for-the-badge&logo=kaggle&logoColor=white"></img></a>
 <a target="_blank" href="https://medium.com/@eminecan570"><img src="https://img.shields.io/badge/Medium-12100E?style=for-the-badge&logo=medium&logoColor=white"></img></a>
 
