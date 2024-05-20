@@ -46,14 +46,6 @@ Some of these variables:
 -review_score: Review score given by the customer.
 
 3-Feature Engineering📑
-Date Features
-Extracted year, month, day, hour, and minute from date columns.
-Calculated time differences between various order stages (e.g., approval time, delivery time).
-Categorical Features
-Applied one-hot encoding to categorical features such as payment type and order status.
-Mapped product categories to higher-level categories.
-Numerical Features
-Scaled numerical features using RobustScaler.
 
 1. **Date Features:**
    - Extracted year, month, day, hour, and minute from date columns.
