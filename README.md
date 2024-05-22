@@ -58,7 +58,7 @@ Some of these variables:
      
 #### 4-Modeling 🖥️
 Models Used
-1. **Streamlit Setup:**
+1. **Logistic Regression**
   
 
 2. **User Interface Design:**
