@@ -62,7 +62,8 @@ Models Used
   
 
 2. **Random Forest**
-   
+
+3. **Gradient Boosting**
 
 
 
