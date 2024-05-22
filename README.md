@@ -61,11 +61,12 @@ Models Used
 1. **Logistic Regression**
   
 
-2. **User Interface Design:**
-   - Designed an intuitive user interface using Streamlit components, CSS and Javascript.
+2. **Random Forest**
+   
 
-3. **Testing:**
-   - Tested the complete application to ensure that both the backend and frontend components are functioning correctly.
+
+
+
 
 
 
