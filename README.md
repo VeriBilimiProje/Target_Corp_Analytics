@@ -55,6 +55,7 @@ Some of these variables:
    - Mapped product categories to higher-level categories.
 3. **Numerical Features:**
    - Scaled numerical features using RobustScaler.
+     
 #### 4-Modeling 🖥️
 Models Used
 1. **Streamlit Setup:**
