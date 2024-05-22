@@ -55,6 +55,16 @@ Some of these variables:
    - Mapped product categories to higher-level categories.
 3. **Numerical Features:**
    - Scaled numerical features using RobustScaler.
+#### 4-Modeling 🖥️
+Models Used
+1. **Streamlit Setup:**
+  
+
+2. **User Interface Design:**
+   - Designed an intuitive user interface using Streamlit components, CSS and Javascript.
+
+3. **Testing:**
+   - Tested the complete application to ensure that both the backend and frontend components are functioning correctly.
 
 
 
