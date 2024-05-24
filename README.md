@@ -68,7 +68,8 @@ Models Used
 #### Evaluation Metrics🖥️:
 
 - **Accuracy**
-   
+
+- **Precision**
 
 
 
