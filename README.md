@@ -71,7 +71,7 @@ Models Used
 
 - **Precision**
 
-- **Precision**
+- **Recall**
 
 - **Precision**
 
