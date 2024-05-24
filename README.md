@@ -73,7 +73,9 @@ Models Used
 
 - **Recall**
 
-- **F1 Score** 
+- **F1 Score**
+
+- **ROC-AUC Score** 
 
  
 
