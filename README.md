@@ -65,7 +65,10 @@ Models Used
 
 3. **Gradient Boosting**
 
+#### Evaluation Metrics🖥️:
 
+1. **Streamlit Setup:**
+   - Used Streamlit for creating web application.
 
 
 
