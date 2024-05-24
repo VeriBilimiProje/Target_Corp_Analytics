@@ -65,7 +65,7 @@ Models Used
 
 3. **Gradient Boosting**
 
-#### Evaluation Metrics🖥️:
+#### Evaluation Metrics 📈:
 
 - **Accuracy**
 
