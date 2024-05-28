@@ -71,7 +71,7 @@ Models Used
 
 - **Precision**
 
-- **Recall**
+- **Recall** 
 
 - **F1 Score** 
 
