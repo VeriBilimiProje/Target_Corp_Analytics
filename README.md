@@ -86,6 +86,11 @@ Models Used
 
 - **ROC-AUC Score**  
 
+#### Results 🥇:
+
+The best performing model was the Cat Boost model with the following evaluation metrics:
+
+![image](![image](https://github.com/mesutdmn/Carbon-Footprint-Calculator-App/assets/72805471/d53054cb-ea4a-4667-a635-b45e747f7cbe))
  
 
 
