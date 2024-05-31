@@ -59,11 +59,20 @@ Some of these variables:
 #### 4-Modeling 🖥️
 Models Used
 1. **Logistic Regression**
-  
 
-2. **Random Forest**
+2. **K-Nearest Neighbors**
 
-3. **Gradient Boosting**
+3. **Classification and Regression Trees**
+
+4. **Gradient Boosting Machine**
+
+5. **XGBoost**
+
+6. **LightGBM**
+
+7. **Random Forest**
+
+8. **CatBoost**
 
 #### Evaluation Metrics 📈:
 
