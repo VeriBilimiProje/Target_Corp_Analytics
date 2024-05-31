@@ -88,13 +88,13 @@ Models Used
 
 #### Results 🥇:
 
+The model results are below:
+
+![image](https://i.pinimg.com/originals/30/69/2b/30692b037a1f871e13e134037f19500c.jpg)
+ 
 The best performing model was the Cat Boost model with the following evaluation metrics:
 
-![image](![image](https://github.com/mesutdmn/Carbon-Footprint-Calculator-App/assets/72805471/d53054cb-ea4a-4667-a635-b45e747f7cbe))
- 
-
-
-
+![image](https://i.pinimg.com/originals/70/b6/51/70b65178ce6d657d9f1fec89b2fe5b4d.jpg)
 
 
 
