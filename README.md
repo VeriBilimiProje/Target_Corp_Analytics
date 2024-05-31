@@ -56,7 +56,7 @@ Some of these variables:
 3. **Numerical Features:**
    - Scaled numerical features using RobustScaler.
      
-#### 4-Modeling 🖥️
+#### Modeling 🖥️
 Models Used
 1. **Logistic Regression**
 
@@ -74,7 +74,7 @@ Models Used
 
 8. **CatBoost**
 
-#### Evaluation Metrics 📈:
+#### Evaluation Metrics 📈
 
 - **Accuracy**  
 
@@ -86,7 +86,7 @@ Models Used
 
 - **ROC-AUC Score**
 
-#### Conclusion 🚀:
+#### Conclusion 🚀
 
 This project successfully identified key factors influencing customer satisfaction. The most significant features were:
 
@@ -96,7 +96,7 @@ This project successfully identified key factors influencing customer satisfacti
    - Product Category: Some product categories had consistently higher satisfaction rates.
  
  
-#### Results 🥇:
+#### Results 🥇
 
 The model results are as follows:
 
@@ -108,7 +108,7 @@ The best performing model was the Cat Boost model with the following evaluation 
 
 
 
-#### How to Use 📲:
+#### How to Use 📲
 
 First, let's go to the website we created.
 
@@ -125,43 +125,6 @@ You can find out the estimated delivery date by filling in the required fields h
 On the review score prediction page, which is another of our models, we can see customer satisfaction with a prediction success of 98% after filling in the required fields.
 
 ![image](https://i.pinimg.com/originals/6e/14/6d/6e146d0637cf9508ad25726ad91b89f6.png) 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ## 👨‍👩‍👧‍👦Team Members 
@@ -191,3 +154,6 @@ On the review score prediction page, which is another of our models, we can see 
 <a target="_blank" href=""><img src="https://img.shields.io/badge/-LinkedIn-0077B5?style=for-the-badge&logo=Linkedin&logoColor=white"></img></a>
 <a target="_blank" href="https://www.kaggle.com/umitdkara"><img src="https://img.shields.io/badge/Kaggle-035a7d?style=for-the-badge&logo=kaggle&logoColor=white"></img></a>
 <a target="_blank" href="https://medium.com/@umitkara1"><img src="https://img.shields.io/badge/Medium-12100E?style=for-the-badge&logo=medium&logoColor=white"></img></a>
+
+## Project Presentation 📺
+
