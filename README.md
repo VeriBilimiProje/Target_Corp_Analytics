@@ -157,3 +157,6 @@ On the review score prediction page, which is another of our models, we can see 
 
 ## Project Presentation 📺
 
+
+https://github.com/VeriBilimiProje/Target_Corp_Analytics/assets/48180024/b683d2b8-3172-42e0-9298-6f8390960e6e
+
