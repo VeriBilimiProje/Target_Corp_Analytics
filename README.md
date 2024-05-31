@@ -98,7 +98,7 @@ This project successfully identified key factors influencing customer satisfacti
  
 #### Results 🥇:
 
-The model results are below:
+The model results are as follows:
 
 ![image](https://i.pinimg.com/originals/30/69/2b/30692b037a1f871e13e134037f19500c.jpg)
  
@@ -107,6 +107,13 @@ The best performing model was the Cat Boost model with the following evaluation 
 ![image](https://i.pinimg.com/originals/70/b6/51/70b65178ce6d657d9f1fec89b2fe5b4d.jpg)
 
 
+
+#### How to Use 📲:
+
+First, let's go to the website we created.
+
+
+![image](https://i.pinimg.com/originals/1f/e2/93/1fe293585a229ad26bb0695d5244b3cf.png)
 
 
 
