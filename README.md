@@ -116,8 +116,15 @@ First, let's go to the website we created.
 ![image](https://i.pinimg.com/originals/1f/e2/93/1fe293585a229ad26bb0695d5244b3cf.png)
 
 
+Here we are greeted by the Home page, which contains general information about the project. In the left bar, we have the models we want to implement. We click on one as desired. First, let's take a look at the Delivery Time Pretiction page.
 
+![image](https://i.pinimg.com/originals/1f/e2/93/1fe293585a229ad26bb0695d5244b3cf.png) 
 
+You can find out the estimated delivery date by filling in the required fields here and pressing the estimate button.
+
+On the review score prediction page, which is another of our models, we can see customer satisfaction with a prediction success of 98% after filling in the required fields.
+
+![image](https://i.pinimg.com/originals/6e/14/6d/6e146d0637cf9508ad25726ad91b89f6.png) 
 
 
 
