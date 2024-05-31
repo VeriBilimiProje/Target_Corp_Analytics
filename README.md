@@ -84,8 +84,18 @@ Models Used
 
 - **F1 Score** 
 
-- **ROC-AUC Score**  
+- **ROC-AUC Score**
 
+#### Conclusion 🚀:
+
+This project successfully identified key factors influencing customer satisfaction. The most significant features were:
+
+
+   - Order Delivery Time: Orders delivered on time received higher satisfaction scores.
+   - Payment Method: Certain payment methods correlated with higher satisfaction.
+   - Product Category: Some product categories had consistently higher satisfaction rates.
+ 
+ 
 #### Results 🥇:
 
 The model results are below:
