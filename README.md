@@ -130,7 +130,7 @@ On the review score prediction page, which is another of our models, we can see 
 
 - ### 🙋‍♂️Ümit Kara
 
-<a target="_blank" href=""><img src="https://img.shields.io/badge/-LinkedIn-0077B5?style=for-the-badge&logo=Linkedin&logoColor=white"></img></a>
+<a target="_blank" href="https://www.linkedin.com/in/umit-kara/"><img src="https://img.shields.io/badge/-LinkedIn-0077B5?style=for-the-badge&logo=Linkedin&logoColor=white"></img></a>
 <a target="_blank" href="https://www.kaggle.com/umitdkara"><img src="https://img.shields.io/badge/Kaggle-035a7d?style=for-the-badge&logo=kaggle&logoColor=white"></img></a>
 <a target="_blank" href="https://medium.com/@umitkara1"><img src="https://img.shields.io/badge/Medium-12100E?style=for-the-badge&logo=medium&logoColor=white"></img></a>
 
