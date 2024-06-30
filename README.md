@@ -35,7 +35,7 @@ Some of these variables:
 3. **Numerical Features:**
    - Scaled numerical features using RobustScaler.
      
-#### Modeling 🖥️
+#### Modeling 🖥️ 
 Models Used
 1. **Logistic Regression**
 
