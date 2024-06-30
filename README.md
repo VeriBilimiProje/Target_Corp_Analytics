@@ -134,7 +134,7 @@ On the review score prediction page, which is another of our models, we can see 
 <a target="_blank" href="https://www.kaggle.com/umitdkara"><img src="https://img.shields.io/badge/Kaggle-035a7d?style=for-the-badge&logo=kaggle&logoColor=white"></img></a>
 <a target="_blank" href="https://medium.com/@umitkara1"><img src="https://img.shields.io/badge/Medium-12100E?style=for-the-badge&logo=medium&logoColor=white"></img></a>
 
-## Project Presentation 📺
+## Project Presentation 📺 
 
 
 https://github.com/VeriBilimiProje/Target_Corp_Analytics/assets/48180024/b683d2b8-3172-42e0-9298-6f8390960e6e
