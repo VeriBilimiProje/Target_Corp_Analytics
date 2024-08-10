@@ -22,7 +22,7 @@ Some of these variables:
    -  order_estimated_delivery_date: Estimated delivery date of the order.
    -  review_score: Review score given by the customer.
                                     
- 
+  
 
 #### Feature Engineering📑 
 
