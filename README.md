@@ -104,7 +104,7 @@ You can find out the estimated delivery date by filling in the required fields h
 On the review score prediction page, which is another of our models, we can see customer satisfaction with a prediction success of 98% after filling in the required fields.
 
 ![image](https://i.pinimg.com/originals/6e/14/6d/6e146d0637cf9508ad25726ad91b89f6.png) 
-
+ 
 
 ## 👨‍👩‍👧‍👦Team Members 
 
