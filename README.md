@@ -8,7 +8,7 @@
 This project aims to predict customer satisfaction and identify the factors that influence it using an e-commerce dataset. The dataset includes various features such as customer demographics, order details, payment information, and product characteristics. By analyzing this data, we aim to build machine learning models to predict customer satisfaction and provide insights into the key drivers of customer satisfaction. 
      
    
-#### Dataset 📝  
+#### Dataset 📝   
 
 Our data set consists of 36 variables and over 100 thousand observations. olist e-commerce websites in Brazil cover the years 2016-2018.
 Some of these variables:
